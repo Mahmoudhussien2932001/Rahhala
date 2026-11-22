@@ -6,7 +6,6 @@ import { useUI } from './UI';
 import { useLang } from '../lib/i18n';
 import { useStore } from '../store/store';
 import { navigate } from '../lib/router';
-import { storage } from '../lib/storage';
 import { fmt } from '../lib/format';
 import { DESTS } from '../data/catalog';
 import { GUIDES } from '../data/guides';
@@ -14,11 +13,11 @@ import { SCOPES } from '../data/explore';
 
 /* "Within Egypt or abroad?" — the first-visit chooser and the cards on the Destinations page. */
 
-const SEEN_KEY = 'rh_scope_seen_v1';
 
 export function WelcomeChooser({ route }) {
   const { T, L } = useLang();
-  const [show, setShow] = useState(() => route === 'home' && !storage.get(SEEN_KEY, false));
+  // Shown every time the site is opened on the home page (closing hides it until the next visit).
+  const [show, setShow] = useState(() => route === 'home');
 
   useEffect(() => {
     if (!show) return undefined;
@@ -30,7 +29,7 @@ export function WelcomeChooser({ route }) {
   }, [show]); // eslint-disable-line
 
   if (!show) return null;
-  const close = () => { storage.set(SEEN_KEY, true); setShow(false); };
+  const close = () => setShow(false);
   const pick = (s) => { close(); navigate(`destinations?s=${s}`); };
 
   return (
