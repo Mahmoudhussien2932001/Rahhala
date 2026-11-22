@@ -4,13 +4,24 @@ import { fmt } from '../lib/format';
 
 /* Photo with a soft placeholder, fade-in on load and a graceful fallback */
 export function Photo({ src, alt = '', className = '', w = 1200, sizes = '(max-width: 760px) 100vw, 40vw', priority = false, style }) {
-  const [state, setState] = useState('loading');
   const url = photoSrc(src, w);
-  useEffect(() => { setState('loading'); }, [url]);
+  // State is tied to the URL it belongs to, so a new URL starts as 'loading'
+  // without a reset effect (that effect used to overwrite 'ready' for cached images).
+  const [st, setSt] = useState({ url, v: 'loading' });
+  const state = st.url === url ? st.v : 'loading';
+  const set = (v) => setSt({ url, v });
+  const img = useRef(null);
+  // Cached/preloaded images can finish before React attaches onLoad — catch that here.
+  useEffect(() => {
+    const el = img.current;
+    if (el?.complete) set(el.naturalWidth ? 'ready' : 'error');
+  }, [url]); // eslint-disable-line
+  const setState = set;
   return (
     <div className={`photo ${state} ${className}`} style={style}>
       {url && state !== 'error' && (
         <img
+          ref={img}
           key={url}
           src={url}
           srcSet={photoSrcSet(src)}
