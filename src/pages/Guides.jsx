@@ -5,6 +5,8 @@ import { useLang } from '../lib/i18n';
 import { navigate } from '../lib/router';
 import { fmt } from '../lib/format';
 import { EGP_PER_USD, GUIDE_ORDER, GUIDES } from '../data/guides';
+import { STATUS_LABEL, visaFor } from '../data/visas';
+import { GuideVisaBox, TravelerForm, TripFinder, useTraveler } from '../components/TripFinder';
 
 /* Country travel guides: hero + quick facts, day-by-day journey, budget and Q&A. */
 
@@ -16,9 +18,49 @@ function tripDays(labels) {
 }
 
 export default function Guides({ query }) {
+  const { T } = useLang();
+  const { profile, save } = useTraveler();
+  const c = query.get('c');
+  const editing = query.get('edit') === '1';
+  const setup = () => navigate('guides?edit=1');
+  useEffect(() => { if (!GUIDES[c]) window.scrollTo({ top: 0, behavior: 'smooth' }); }, [c, editing]);
+
+  if (GUIDES[c]) return <GuideView id={c} profile={profile} onSetup={setup} />;
+
+  return (
+    <>
+      <section className="tf-hero">
+        <div className="tf-hero-ph">
+          {GUIDE_ORDER.map((k) => <Photo key={k} src={GUIDES[k].hero} w={1200} sizes="34vw" priority />)}
+        </div>
+        <div className="tf-hero-shade" />
+        <div className="wrap tf-hero-in">
+          <div className="eyebrow light"><Icon name="book" size={15} />{T('أدلة السفر', 'Travel guides')}</div>
+          <h1>{T('تقدر تسافر فين؟', 'Where can you travel?')}</h1>
+          <p className="g-tag">{T('جاوب على سؤالين ونقولك الدول المتاحة ليك، وخطة كل دولة، وإزاي تطلع تأشيرة الدول التانية.', 'Answer two questions and we will show the countries open to you, a plan for each, and how to get a visa for the rest.')}</p>
+        </div>
+      </section>
+      {!profile || editing ? (
+        <section className="sec tf-form-sec">
+          <div className="wrap">
+            <TravelerForm
+              initial={profile}
+              onSave={(p) => { save(p); navigate('guides'); }}
+              onCancel={profile ? () => navigate('guides') : null}
+            />
+          </div>
+        </section>
+      ) : (
+        <TripFinder profile={profile} onEdit={setup} />
+      )}
+    </>
+  );
+}
+
+function GuideView({ id, profile, onSetup }) {
   const { T, L } = useLang();
-  const id = GUIDES[query.get('c')] ? query.get('c') : GUIDE_ORDER[0];
   const g = GUIDES[id];
+  const myVisa = profile ? visaFor(profile.nat, profile.held, id) : null;
   const [level, setLevel] = useState('mid');
   const days = tripDays(g.dayLabels);
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [id]);
@@ -41,7 +83,7 @@ export default function Guides({ query }) {
             {g.facts.map((f) => (
               <div key={f.k.en} className="g-fact">
                 <i><Icon name={f.icon} size={18} /></i>
-                <div><span>{L(f.k)}</span><b>{L(f.v)}</b></div>
+                <div><span>{L(f.k)}</span><b>{f.k.en === 'Visa' && myVisa ? `${L(STATUS_LABEL[myVisa.status])}${myVisa.stay ? ` · ${L(myVisa.stay)}` : ''}` : L(f.v)}</b></div>
               </div>
             ))}
           </div>
@@ -54,6 +96,11 @@ export default function Guides({ query }) {
             </button>
           ))}
         </nav>
+      </section>
+
+      {/* ---------- your visa ---------- */}
+      <section className="sec-sm g-visa-sec">
+        <div className="wrap"><GuideVisaBox dest={id} profile={profile} onSetup={onSetup} /></div>
       </section>
 
       {/* ---------- intro ---------- */}

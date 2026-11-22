@@ -806,3 +806,96 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width
   .g-budget { padding: 22px }
   .gb-total { grid-template-columns: 1fr }
 }
+
+/* ---------- Trip finder (components/TripFinder.jsx) ---------- */
+.tf-hero { position: relative; min-height: 62vh; display: flex; align-items: flex-end; color: #fff; overflow: hidden; isolation: isolate; background: #071F30; padding: 150px 0 120px }
+.tf-hero-ph { position: absolute; inset: 0; z-index: -2; display: grid; grid-template-columns: repeat(3, 1fr) }
+.tf-hero-ph .photo { position: relative; height: 100% }
+.tf-hero-ph img { animation: gZoom 14s ease-out both }
+.tf-hero-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(4, 20, 32, .6), rgba(4, 20, 32, .35) 40%, rgba(4, 20, 32, .9)) }
+.tf-hero h1 { font-family: var(--fh); font-weight: 800; font-size: clamp(42px, 7vw, 92px); line-height: 1.05; margin: 12px 0 12px; text-shadow: 0 10px 50px rgba(0, 0, 0, .35) }
+.tf-hero-in { animation: heroIn 1s var(--ease) both }
+
+.tf-form-sec { margin-top: -90px; position: relative; z-index: 3; padding-top: 0 }
+.tf-card { max-width: 760px; margin-inline: auto; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r3); box-shadow: var(--sh2); padding: 34px; display: grid; gap: 14px }
+.tf-step { display: flex; align-items: center; gap: 12px; font-family: var(--fh); font-size: 19px; font-weight: 700; margin-top: 6px }
+.tf-step span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--ocean); color: #fff; font-size: 15px; flex: none }
+.tf-card .dd-box { padding: 13px 16px; font-size: 16px; border-radius: 16px }
+.tf-help { color: var(--ink3); font-size: 14px; margin-top: -6px }
+.tf-chips { display: flex; flex-wrap: wrap; gap: 8px }
+.tf-chips button { display: inline-flex; align-items: center; gap: 7px; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line2); background: var(--paper); font-size: 14.5px; transition: background .2s, border-color .2s, color .2s, transform .2s }
+.tf-chips button:hover { border-color: var(--teal); transform: translateY(-1px) }
+.tf-chips button.on { background: var(--mint); border-color: var(--teal); color: var(--teal); font-weight: 600 }
+.tf-chips button.none.on { background: var(--sand); border-color: var(--ink3); color: var(--ink) }
+.tf-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; flex-wrap: wrap }
+.tf-privacy { display: flex; align-items: center; gap: 6px; justify-content: center; font-size: 12.5px; color: var(--ink3) }
+
+.vs { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; background: #fff; color: var(--ink); box-shadow: 0 4px 14px -6px rgba(0, 0, 0, .3) }
+.vs i { width: 8px; height: 8px; border-radius: 50%; background: currentColor }
+.vs small { font-weight: 500; opacity: .8 }
+.vs-home, .vs-free { color: var(--good) }
+.vs-voa, .vs-evisa { color: var(--sea) }
+.vs-check { color: #B7791F }
+.vs-embassy { color: var(--coral) }
+
+.tf-results { padding-top: 50px }
+.tf-profile { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding: 16px 20px; border-radius: 20px; background: var(--paper); border: 1px solid var(--line); margin-bottom: 50px }
+.tf-profile > div { display: flex; align-items: center; gap: 8px; flex-wrap: wrap }
+.tf-profile span { color: var(--ink3); font-size: 14px }
+.tf-profile b { font-weight: 600 }
+.tf-profile em { font-style: normal; font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--mint); color: var(--teal) }
+.tf-head2 { margin-top: 70px }
+.tf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start }
+.tf-dest { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r3); overflow: hidden; box-shadow: var(--sh1) }
+.tf-dest.hard { border-style: dashed; border-color: var(--line2) }
+.tf-dest-ph { position: relative; height: 240px; cursor: pointer; color: #fff; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; padding: 16px }
+.tf-dest-ph .photo { position: absolute; inset: 0 }
+.tf-dest-ph .photo img { transition: opacity .9s, transform 1.4s var(--ease) }
+.tf-dest-ph:hover .photo img { transform: scale(1.07) }
+.tf-dest-ph .ov { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4, 20, 32, .1), rgba(4, 20, 32, .75)) }
+.tf-dest-ph .vs, .tf-dest-ph h3 { position: relative }
+.tf-dest-ph h3 { font-family: var(--fh); font-size: 34px; line-height: 1.1 }
+.tf-dest-tx { padding: 18px 20px 20px; display: grid; gap: 10px }
+.tf-via { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--teal); font-weight: 500 }
+.tf-note { font-size: 13.5px; color: var(--ink2); line-height: 1.7 }
+.tf-verify { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: #9A6400; background: #FDF4DF; padding: 5px 10px; border-radius: 10px; width: fit-content }
+.tf-dest-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px }
+.icon.rot { transform: rotate(180deg) }
+.btn .icon { transition: transform .25s var(--ease) }
+
+.vh { margin-top: 6px; padding-top: 14px; border-top: 1px dashed var(--line2); display: grid; gap: 12px; animation: pageIn .4s var(--ease) both }
+.vh-steps { list-style: none; padding: 0; display: grid; gap: 10px }
+.vh-steps li { display: flex; gap: 10px; align-items: flex-start }
+.vh-steps li span { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--sand); color: var(--ocean); font-size: 12.5px; font-weight: 700; margin-top: 2px }
+.vh-steps li p { font-size: 14px; line-height: 1.7; color: var(--ink2) }
+.vh-fee { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; padding: 10px 12px; border-radius: 12px; background: var(--mint); color: #0B6E66 }
+.vh-docs { padding: 12px 14px; border-radius: 14px; background: var(--sand) }
+.vh-docs b { font-size: 14px }
+.vh-docs ul { list-style: none; padding: 0; margin-top: 8px; display: grid; gap: 6px }
+.vh-docs li { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; color: var(--ink2); line-height: 1.6 }
+.vh-docs li .icon { color: var(--teal); margin-top: 3px }
+.vh-tip { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; padding: 10px 12px; border-radius: 12px; background: #FDF4E1; color: #7A5410 }
+.vh-link { width: fit-content }
+
+.g-visa-sec { padding: 0; margin-top: -36px; position: relative; z-index: 3 }
+.gv { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r2); box-shadow: var(--sh2); padding: 20px 24px }
+.gv.easy { border-inline-start: 5px solid var(--good) }
+.gv.hard { border-inline-start: 5px solid var(--coral) }
+.gv-empty { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-inline-start: 5px solid var(--teal) }
+.gv-empty b { font-family: var(--fh); font-size: 18px }
+.gv-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap }
+.gv-top > div:first-child { display: grid; gap: 8px; justify-items: start }
+.gv-for { font-size: 13px; color: var(--ink3) }
+.gv .vs { box-shadow: none; background: var(--sand); font-size: 14px }
+.gv-actions { display: flex; gap: 8px; flex-wrap: wrap }
+
+@media (max-width: 900px) {
+  .tf-grid { grid-template-columns: 1fr 1fr }
+}
+@media (max-width: 640px) {
+  .tf-hero-ph { grid-template-columns: 1fr }
+  .tf-hero-ph .photo:not(:first-child) { display: none }
+  .tf-grid { grid-template-columns: 1fr }
+  .tf-card { padding: 22px }
+  .tf-actions .btn { flex: 1 }
+}
