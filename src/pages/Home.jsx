@@ -14,6 +14,7 @@ import { navigate } from '../lib/router';
 import { CATS, CITIES, DESTS } from '../data/catalog';
 import { daysTo, discount, fmt, MONTHS } from '../lib/format';
 import { ARTICLES, FAQ } from '../data/content';
+import { GUIDE_ORDER, GUIDES } from '../data/guides';
 
 export default function Home() {
   const { T, L, lang } = useLang();
@@ -205,20 +206,18 @@ export default function Home() {
 
       <section className="sec pb0">
         <div className="wrap">
-          <Reveal variant="zoom" className="ai-teaser">
-            <div>
-              <div className="eyebrow light"><Icon name="sparkle" size={15} /> {T('جديد: مساعد السفر الذكي', 'New: AI trip assistant')}</div>
-              <h2>{T('خطة رحلتك كاملة في دقيقة', 'Your whole trip, planned in a minute')}</h2>
-              <p>{T('قولّه رايح فين وميزانيتك كام، يعملّك خطة يوم بيوم، يحسبلك التكلفة، يقولك تاخد معاك إيه، ويرشحلك عروض الشركات المناسبة.', 'Tell it where you’re going and your budget — it builds a day-by-day plan, estimates costs, tells you what to pack, and suggests matching agency offers.')}</p>
-              <div className="row-start">
-                <button className="btn btn-sun" onClick={() => navigate('planner')}><Icon name="sparkle" />{T('ابدأ خطتك', 'Start planning')} <Icon name="arrow" flip /></button>
-              </div>
-            </div>
-            <div className="ai-demo" aria-hidden="true">
-              <div className="q">{T('عايز 4 أيام في دهب بـ 15 ألف لشخصين', '4 days in Dahab for two, 15,000 EGP')}</div>
-              <div className="a"><b>{T('اليوم 1:', 'Day 1:')}</b> {T('غطس في البلو هول وغروب على الممشى…', 'Snorkel the Blue Hole, sunset on the promenade…')}<br /><b>{T('التكلفة:', 'Budget:')}</b> {T('≈ 13,800 ج.م شامل السكن والأكل', '≈ 13,800 EGP incl. stay & food')}</div>
-            </div>
-          </Reveal>
+          <Reveal className="head"><div><div className="eyebrow">{T('أدلة السفر', 'Travel guides')}</div><h2>{T('خطط جاهزة بالصور والتكلفة', 'Ready-made plans with photos & costs')}</h2>
+            <p className="muted">{T('خطة يوم بيوم، الميزانية، وإجابات كل الأسئلة اللي بتيجي في بالك.', 'Day-by-day plans, budgets and answers to every question on your mind.')}</p></div>
+            <button className="btn btn-ghost" onClick={() => navigate('guides')}>{T('كل الأدلة', 'All guides')} <Icon name="arrow" flip /></button></Reveal>
+          <div className="g-home">
+            {GUIDE_ORDER.map((k, i) => (
+              <Reveal key={k} variant="zoom" delay={i * 100} className="g-more-card" onClick={() => navigate(`guides?c=${k}`)}>
+                <Photo src={GUIDES[k].hero} w={900} />
+                <div className="ov" />
+                <div className="tx"><span>{GUIDES[k].days.length} {T('محطات', 'stops')} · {GUIDES[k].faq.length} {T('أسئلة', 'Q&As')}</span><h3>{L(GUIDES[k].name)}</h3><p>{L(GUIDES[k].tagline)}</p></div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

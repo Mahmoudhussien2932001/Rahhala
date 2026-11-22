@@ -18,7 +18,7 @@ export function Brand({ light }) {
   );
 }
 
-const OVER_PHOTO = ['home', 'offers', 'destinations', 'agencies', 'compare', 'planner'];
+const OVER_PHOTO = ['home', 'offers', 'destinations', 'agencies', 'compare', 'guides'];
 
 export function Navbar({ route }) {
   const { T, toggle, lang } = useLang();
@@ -41,7 +41,7 @@ export function Navbar({ route }) {
     ['offers', T('العروض', 'Offers')],
     ['destinations', T('الوجهات', 'Destinations')],
     ['agencies', T('الشركات', 'Agencies')],
-    ['planner', T('خطّط بالـ AI', 'AI Planner')],
+    ['guides', T('أدلة السفر', 'Guides')],
     ['compare', T('المقارنة', 'Compare') + (store.compare.length ? ` (${store.compare.length})` : '')],
   ];
   return (

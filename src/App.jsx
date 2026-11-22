@@ -7,7 +7,7 @@ import { CompareBar, Footer, Navbar } from './components/Layout';
 import Home from './pages/Home';
 import Offers from './pages/Offers';
 import { Agencies, Compare, Destinations, Login } from './pages/Browse';
-import Planner from './pages/Planner';
+import Guides from './pages/Guides';
 import AgencyDashboard from './pages/dashboard/AgencyDashboard';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
 
@@ -17,7 +17,7 @@ const PAGES = {
   destinations: Destinations,
   agencies: Agencies,
   compare: Compare,
-  planner: Planner,
+  guides: Guides,
   login: Login,
   dashboard: AgencyDashboard,
   admin: AdminDashboard,
