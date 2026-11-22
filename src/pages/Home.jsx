@@ -203,6 +203,25 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="sec pb0">
+        <div className="wrap">
+          <Reveal variant="zoom" className="ai-teaser">
+            <div>
+              <div className="eyebrow light"><Icon name="sparkle" size={15} /> {T('جديد: مساعد السفر الذكي', 'New: AI trip assistant')}</div>
+              <h2>{T('خطة رحلتك كاملة في دقيقة', 'Your whole trip, planned in a minute')}</h2>
+              <p>{T('قولّه رايح فين وميزانيتك كام، يعملّك خطة يوم بيوم، يحسبلك التكلفة، يقولك تاخد معاك إيه، ويرشحلك عروض الشركات المناسبة.', 'Tell it where you’re going and your budget — it builds a day-by-day plan, estimates costs, tells you what to pack, and suggests matching agency offers.')}</p>
+              <div className="row-start">
+                <button className="btn btn-sun" onClick={() => navigate('planner')}><Icon name="sparkle" />{T('ابدأ خطتك', 'Start planning')} <Icon name="arrow" flip /></button>
+              </div>
+            </div>
+            <div className="ai-demo" aria-hidden="true">
+              <div className="q">{T('عايز 4 أيام في دهب بـ 15 ألف لشخصين', '4 days in Dahab for two, 15,000 EGP')}</div>
+              <div className="a"><b>{T('اليوم 1:', 'Day 1:')}</b> {T('غطس في البلو هول وغروب على الممشى…', 'Snorkel the Blue Hole, sunset on the promenade…')}<br /><b>{T('التكلفة:', 'Budget:')}</b> {T('≈ 13,800 ج.م شامل السكن والأكل', '≈ 13,800 EGP incl. stay & food')}</div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       <section className="sec">
         <div className="wrap">
           <Reveal className="head"><div><div className="eyebrow">{T('بسيطة جداً', 'Simple as that')}</div><h2>{T('إزاي بتشتغل؟', 'How it works')}</h2></div></Reveal>
