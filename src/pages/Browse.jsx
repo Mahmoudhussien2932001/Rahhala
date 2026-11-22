@@ -1,30 +1,44 @@
 import Icon from '../components/Icon';
 import { PageHeader } from '../components/Layout';
-import { AgencyCard, Avatar, DestCard, Verified, stars } from '../components/Cards';
+import { AgencyCard, Avatar, Verified, stars } from '../components/Cards';
 import { Photo, Reveal } from '../components/Media';
 import { OfferModal } from '../components/Modals';
 import { useUI } from '../components/UI';
 import { useLang } from '../lib/i18n';
 import { useStore } from '../store/store';
 import { navigate } from '../lib/router';
-import { CATS, CITIES, DESTS, FEATURES } from '../data/catalog';
+import { CITIES, DESTS, FEATURES } from '../data/catalog';
 import { discount, fdate, money } from '../lib/format';
+import { ExploreCard } from '../components/Explore';
+import { GROUPS, SCOPES } from '../data/explore';
 
-export function Destinations() {
+export function Destinations({ query }) {
   const { T, L } = useLang();
+  const scope = SCOPES[query.get('s')] ? query.get('s') : 'egypt';
+  const s = SCOPES[scope];
   return (
     <>
-      <PageHeader title={T('الوجهات', 'Destinations')} sub={T('من الحرم للجبل للبحر — اختار وجهتك وشوف كل عروضها', 'From the Haram to the mountains to the sea — pick a destination and see every offer')} photo="px:16660047" />
+      <PageHeader key={scope} title={L(s.name)} sub={L(s.sub)} crumb={T('الوجهات', 'Destinations')} photo={s.photo} />
       <div className="wrap sec-sm">
-        {Object.entries(CATS).map(([ck, c]) => {
-          const ds = Object.keys(DESTS).filter((k) => DESTS[k].cat === ck);
-          return (
-            <div key={ck} className="dest-group">
-              <Reveal className="head"><div><div className="eyebrow" style={{ color: c.color }}>{L(c)}</div><h2 className="h-md">{L(c.sub)}</h2></div></Reveal>
-              <div className="dests small">{ds.map((k, i) => <DestCard key={k} id={k} i={i} />)}</div>
-            </div>
-          );
-        })}
+        <div className="scope-tabs" role="tablist" aria-label={T('نوع السفر', 'Trip scope')}>
+          {Object.entries(SCOPES).map(([k, x]) => (
+            <button key={k} role="tab" aria-selected={k === scope} className={k === scope ? 'on' : ''} onClick={() => navigate(`destinations?s=${k}`)}>
+              <Photo src={x.photo} w={200} sizes="48px" />
+              <span><b>{L(x.name)}</b><small>{L(x.sub)}</small></span>
+            </button>
+          ))}
+        </div>
+        {GROUPS[scope].map((g) => (
+          <div key={g.name.en} className="dest-group">
+            <Reveal className="head xg-head">
+              <div className="xg-title">
+                <i><Icon name={g.icon} size={20} /></i>
+                <div><h2 className="h-md">{L(g.name)}</h2><p className="muted">{L(g.sub)}</p></div>
+              </div>
+            </Reveal>
+            <div className="xc-grid">{g.items.map((it, i) => <ExploreCard key={it.dest || it.guide} dest={it.dest} guide={it.guide} i={i} />)}</div>
+          </div>
+        ))}
       </div>
     </>
   );

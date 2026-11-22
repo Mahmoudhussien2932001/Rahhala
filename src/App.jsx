@@ -4,6 +4,7 @@ import { StoreProvider } from './store/store';
 import { UIProvider } from './components/UI';
 import { useRoute } from './lib/router';
 import { CompareBar, Footer, Navbar } from './components/Layout';
+import { WelcomeChooser } from './components/Explore';
 import Home from './pages/Home';
 import Offers from './pages/Offers';
 import { Agencies, Compare, Destinations, Login } from './pages/Browse';
@@ -39,6 +40,7 @@ function Shell() {
       </main>
       {!NO_FOOTER.includes(route) && <Footer />}
       <CompareBar route={route} />
+      <WelcomeChooser route={route} />
     </>
   );
 }

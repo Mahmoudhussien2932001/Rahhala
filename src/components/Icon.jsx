@@ -40,6 +40,8 @@ const P = {
   play: '<path d="M8 5l11 7-11 7z"/>',
   pause: '<path d="M8 5v14M16 5v14"/>',
   chev: '<path d="M6 9l6 6 6-6"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  compass: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
 };
 
 export default function Icon({ name, size = 18, className = '', flip = false, style }) {

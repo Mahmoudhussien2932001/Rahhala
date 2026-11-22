@@ -899,3 +899,69 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width
   .tf-card { padding: 22px }
   .tf-actions .btn { flex: 1 }
 }
+
+/* ---------- Welcome chooser + Destinations split (components/Explore.jsx) ---------- */
+.wc { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 20px; background: rgba(4, 20, 32, .72); backdrop-filter: blur(10px); animation: wcFade .35s ease both; overflow-y: auto }
+@keyframes wcFade { from { opacity: 0 } }
+.wc-in { width: min(980px, 100%); display: grid; gap: 22px; justify-items: center; color: #fff }
+.wc-head { text-align: center; display: grid; justify-items: center; gap: 8px; animation: heroIn .7s var(--ease) both }
+.wc-head svg { border-radius: 14px; box-shadow: 0 14px 30px -12px rgba(0, 0, 0, .6) }
+.wc-head h2 { font-family: var(--fh); font-size: clamp(28px, 4.4vw, 48px); line-height: 1.15; margin-top: 6px }
+.wc-head p { opacity: .85; font-size: 16px }
+.wc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 100% }
+.wc-card { position: relative; height: min(52vh, 420px); min-height: 260px; border-radius: var(--r3); overflow: hidden; color: #fff; text-align: start; display: flex; align-items: flex-end; box-shadow: 0 30px 60px -24px rgba(0, 0, 0, .7); opacity: 0; transform: translateY(24px); animation: heroIn .8s var(--ease) forwards; animation-delay: var(--d); outline: 0; border: 3px solid transparent; transition: border-color .25s }
+.wc-card .photo { position: absolute; inset: 0 }
+.wc-card .photo img { transition: opacity .9s, transform 1.4s var(--ease) }
+.wc-card:hover .photo img, .wc-card:focus-visible .photo img { transform: scale(1.07) }
+.wc-card:focus-visible { border-color: var(--sun) }
+.wc-card .ov { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4, 20, 32, .05) 30%, rgba(4, 20, 32, .88)) }
+.wc-card .tx { position: relative; padding: 26px; display: grid; gap: 6px }
+.wc-card b { font-family: var(--fh); font-size: clamp(30px, 4vw, 44px); line-height: 1.1 }
+.wc-card small { font-size: 15px; opacity: .9 }
+.wc-card i { font-style: normal; display: inline-flex; align-items: center; gap: 8px; width: fit-content; margin-top: 10px; padding: 9px 18px; border-radius: 999px; background: linear-gradient(135deg, #FFC56B, var(--coral)); font-weight: 600; font-size: 14.5px; transition: transform .25s }
+.wc-card:hover i { transform: translateX(4px) }
+[dir=rtl] .wc-card:hover i { transform: translateX(-4px) }
+.wc-skip { color: #fff; opacity: .75; font-size: 14.5px; text-decoration: underline; text-underline-offset: 4px; padding: 6px 10px }
+.wc-skip:hover { opacity: 1 }
+
+.scope-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: -70px 0 50px; position: relative; z-index: 3 }
+.scope-tabs button { display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 22px; background: var(--paper); border: 2px solid var(--line); box-shadow: var(--sh1); text-align: start; transition: border-color .25s, transform .25s, box-shadow .25s }
+.scope-tabs button:hover { transform: translateY(-2px); box-shadow: var(--sh2) }
+.scope-tabs button.on { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(20, 167, 157, .12), var(--sh2) }
+.scope-tabs .photo { width: 64px; height: 64px; border-radius: 16px; flex: none }
+.scope-tabs b { display: block; font-family: var(--fh); font-size: 19px }
+.scope-tabs small { display: block; color: var(--ink3); font-size: 13px; line-height: 1.5 }
+.scope-tabs button.on b { color: var(--teal) }
+
+.xg-head { margin-bottom: 20px }
+.xg-title { display: flex; align-items: center; gap: 14px }
+.xg-title i { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: var(--mint); color: var(--teal); flex: none }
+.xg-title p { margin-top: 2px }
+.xc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px }
+.xc { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden; box-shadow: var(--sh1); display: flex; flex-direction: column; transition: box-shadow .3s, transform .3s var(--ease) }
+.xc.in:hover { transform: translateY(-4px); box-shadow: var(--sh2) }
+.xc-ph { position: relative; height: 210px; cursor: pointer; color: #fff }
+.xc-ph .photo { position: absolute; inset: 0 }
+.xc-ph .photo img { transition: opacity .9s, transform 1.4s var(--ease) }
+.xc:hover .xc-ph .photo img { transform: scale(1.07) }
+.xc-ph .ov { position: absolute; inset: 0; background: linear-gradient(to top, rgba(4, 22, 36, .85), transparent 60%) }
+.xc-tags { position: absolute; top: 12px; inset-inline-start: 12px; display: flex; gap: 6px; flex-wrap: wrap }
+.xc-tags .tag { padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, .92); color: var(--ink); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px }
+.xc-tags .tag.guide { background: var(--coral); color: #fff }
+.xc-tx { position: absolute; inset: auto 0 0 0; padding: 14px 16px }
+.xc-tx h3 { font-family: var(--fh); font-size: 21px; line-height: 1.2 }
+.xc-tx span { font-size: 13px; opacity: .88; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden }
+.xc-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px; margin-top: auto; flex-wrap: wrap }
+.xc-price { font-size: 13px; color: var(--ink2) }
+.xc-price b { color: var(--ocean); font-size: 15px }
+.xc-btns { display: flex; gap: 6px }
+
+@media (max-width: 1000px) { .xc-grid { grid-template-columns: repeat(3, 1fr) } }
+@media (max-width: 760px) {
+  .wc-grid { grid-template-columns: 1fr }
+  .wc-card { height: 30vh; min-height: 190px }
+  .wc-card .tx { padding: 18px }
+  .scope-tabs { grid-template-columns: 1fr; margin-top: -50px }
+  .xc-grid { grid-template-columns: 1fr 1fr }
+}
+@media (max-width: 480px) { .xc-grid { grid-template-columns: 1fr } }
