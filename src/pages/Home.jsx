@@ -14,7 +14,7 @@ import { navigate } from '../lib/router';
 import { CATS, CITIES, DESTS } from '../data/catalog';
 import { daysTo, discount, fmt, MONTHS } from '../lib/format';
 import { ARTICLES, FAQ } from '../data/content';
-import { GUIDE_ORDER, GUIDES } from '../data/guides';
+import { GUIDES } from '../data/guides';
 
 export default function Home() {
   const { T, L, lang } = useLang();
@@ -210,7 +210,7 @@ export default function Home() {
             <p className="muted">{T('خطة يوم بيوم، الميزانية، وإجابات كل الأسئلة اللي بتيجي في بالك.', 'Day-by-day plans, budgets and answers to every question on your mind.')}</p></div>
             <button className="btn btn-ghost" onClick={() => navigate('guides')}>{T('كل الأدلة', 'All guides')} <Icon name="arrow" flip /></button></Reveal>
           <div className="g-home">
-            {GUIDE_ORDER.map((k, i) => (
+            {['italy', 'switzerland', 'georgia', 'morocco', 'kenya', 'egypt'].map((k, i) => (
               <Reveal key={k} variant="zoom" delay={i * 100} className="g-more-card" onClick={() => navigate(`guides?c=${k}`)}>
                 <Photo src={GUIDES[k].hero} w={900} />
                 <div className="ov" />

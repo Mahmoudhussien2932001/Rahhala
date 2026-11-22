@@ -31,7 +31,7 @@ export default function Guides({ query }) {
     <>
       <section className="tf-hero">
         <div className="tf-hero-ph">
-          {GUIDE_ORDER.map((k) => <Photo key={k} src={GUIDES[k].hero} w={1200} sizes="34vw" priority />)}
+          {['italy', 'georgia', 'morocco', 'kenya'].map((k) => <Photo key={k} src={GUIDES[k].hero} w={900} sizes="25vw" priority />)}
         </div>
         <div className="tf-hero-shade" />
         <div className="wrap tf-hero-in">

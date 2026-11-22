@@ -292,6 +292,354 @@ export const GUIDES = {
     dayLabels: ['1', '2', '3–4', '5–6', '7'],
     offersLink: 'offers',
   },
+
+  italy: {
+    name: { ar: 'إيطاليا', en: 'Italy' },
+    hero: 'px:37433103',
+    tagline: { ar: 'روما وفلورنسا وفينيسيا وساحل أمالفي — متحف مفتوح على البحر', en: 'Rome, Florence, Venice and the Amalfi Coast — an open-air museum by the sea' },
+    intro: {
+      ar: 'إيطاليا رحلة العمر لأي حد بيحب التاريخ والأكل والمناظر: الكولوسيوم في روما، فن عصر النهضة في فلورنسا، قنوات فينيسيا، وبيوت أمالفي الملونة على الجبل. القطارات السريعة بتربط المدن في ساعات قليلة.',
+      en: 'Italy is a trip of a lifetime for lovers of history, food and views: the Colosseum in Rome, Renaissance art in Florence, the canals of Venice and the pastel villages of Amalfi. Fast trains link the cities in just a few hours.',
+    },
+    facts: [
+      { icon: 'cal', k: { ar: 'أحسن وقت', en: 'Best time' }, v: { ar: 'أبريل – يونيو، سبتمبر – أكتوبر', en: 'Apr – Jun, Sep – Oct' } },
+      { icon: 'clock', k: { ar: 'المدة المناسبة', en: 'Ideal length' }, v: { ar: '8 – 10 أيام', en: '8 – 10 days' } },
+      { icon: 'shield', k: { ar: 'التأشيرة', en: 'Visa' }, v: { ar: 'تأشيرة شنغن', en: 'Schengen visa' } },
+      { icon: 'money', k: { ar: 'العملة', en: 'Currency' }, v: { ar: 'يورو (EUR)', en: 'Euro (EUR)' } },
+      { icon: 'users', k: { ar: 'اللغة', en: 'Language' }, v: { ar: 'إيطالي، والإنجليزي في الأماكن السياحية', en: 'Italian; English in tourist areas' } },
+      { icon: 'plane', k: { ar: 'المطار', en: 'Airports' }, v: { ar: 'روما، ميلانو، فينيسيا', en: 'Rome, Milan, Venice' } },
+    ],
+    days: [
+      {
+        place: { ar: 'روما', en: 'Rome' }, photo: 'px:32619390',
+        title: { ar: 'روما القديمة والكولوسيوم', en: 'Ancient Rome & the Colosseum' },
+        items: [
+          { ar: 'الكولوسيوم والمنتدى الروماني وتل بالاتين', en: 'The Colosseum, Roman Forum and Palatine Hill' },
+          { ar: 'نافورة تريفي وسلالم إسبانيا والبانثيون', en: 'Trevi Fountain, the Spanish Steps and the Pantheon' },
+          { ar: 'جيلاتو وعشا في حي تراستيفيري', en: 'Gelato and dinner in Trastevere' },
+        ],
+        tip: { ar: 'احجز تذكرة الكولوسيوم أونلاين بميعاد محدد — الطوابير طويلة جداً.', en: 'Book a timed Colosseum ticket online — the queues are long.' },
+      },
+      {
+        place: { ar: 'الفاتيكان', en: 'Vatican City' }, photo: 'px:5659303',
+        title: { ar: 'الفاتيكان: أصغر دولة في العالم', en: 'The Vatican, the smallest country on earth' },
+        items: [
+          { ar: 'ساحة القديس بطرس والكاتدرائية', en: "St Peter's Square and Basilica" },
+          { ar: 'متاحف الفاتيكان وكنيسة سيستينا', en: 'The Vatican Museums and Sistine Chapel' },
+          { ar: 'طلعة القبة والمنظر على روما كلها', en: 'Climb the dome for a view over all of Rome' },
+        ],
+        tip: { ar: 'لازم الكتاف والركب تبقى مغطية عشان تدخل الكاتدرائية.', en: 'Shoulders and knees must be covered to enter the basilica.' },
+      },
+      {
+        place: { ar: 'فلورنسا', en: 'Florence' }, photo: 'px:36435317',
+        title: { ar: 'فلورنسا وفن عصر النهضة', en: 'Florence & the Renaissance' },
+        items: [
+          { ar: 'القطار السريع من روما (حوالي ساعة ونص)', en: 'Fast train from Rome (about 1.5 hours)' },
+          { ar: 'الدومو وكوبري بونتي فيكيو', en: 'The Duomo and the Ponte Vecchio' },
+          { ar: 'تمثال داوود وغروب من ساحة ميكيلانجلو', en: "Michelangelo's David and sunset at Piazzale Michelangelo" },
+          { ar: 'يوم في بيزا أو ريف توسكانا', en: 'A day trip to Pisa or the Tuscan countryside' },
+        ],
+        tip: { ar: 'احجز تذاكر القطار بدري على موقع Trenitalia أو Italo — السعر بيزيد قرب الميعاد.', en: 'Book trains early on Trenitalia or Italo — fares rise closer to the date.' },
+      },
+      {
+        place: { ar: 'فينيسيا', en: 'Venice' }, photo: 'px:30802526',
+        title: { ar: 'فينيسيا مدينة القنوات', en: 'Venice, the city of canals' },
+        items: [
+          { ar: 'ساحة سان ماركو والكاتدرائية', en: "St Mark's Square and Basilica" },
+          { ar: 'جولة جندول أو الفابوريتو في القناة الكبيرة', en: 'A gondola or vaporetto ride down the Grand Canal' },
+          { ar: 'جزيرتي مورانو وبورانو الملونة', en: 'The islands of Murano and colourful Burano' },
+        ],
+        tip: { ar: 'في أيام معينة في رسوم دخول لزوار اليوم الواحد — شوف موقع المدينة قبل ما تروح.', en: 'Day-trippers pay an entry fee on some dates — check the city website before you go.' },
+      },
+      {
+        place: { ar: 'ساحل أمالفي', en: 'Amalfi Coast' }, photo: 'px:358223',
+        title: { ar: 'ساحل أمالفي وبوزيتانو', en: 'The Amalfi Coast & Positano' },
+        items: [
+          { ar: 'القطار لنابولي، وبعدها باص أو مركب للساحل', en: 'Train to Naples, then bus or ferry to the coast' },
+          { ar: 'بوزيتانو وأمالفي ورافيلو', en: 'Positano, Amalfi and Ravello' },
+          { ar: 'مركب لجزيرة كابري والكهف الأزرق', en: 'A boat to Capri and the Blue Grotto' },
+        ],
+        tip: { ar: 'المراكب بين البلاد أسرع وأحلى من الطريق الجبلي في الصيف.', en: 'Ferries between towns beat the cliff road in summer traffic.' },
+      },
+    ],
+    budget: {
+      low: [
+        { k: { ar: 'السكن', en: 'Stay' }, usd: 60 },
+        { k: { ar: 'الأكل', en: 'Food' }, usd: 30 },
+        { k: { ar: 'المواصلات', en: 'Transport' }, usd: 20 },
+        { k: { ar: 'الأنشطة والدخول', en: 'Activities' }, usd: 15 },
+      ],
+      mid: [
+        { k: { ar: 'السكن', en: 'Stay' }, usd: 130 },
+        { k: { ar: 'الأكل', en: 'Food' }, usd: 55 },
+        { k: { ar: 'المواصلات', en: 'Transport' }, usd: 35 },
+        { k: { ar: 'الأنشطة والدخول', en: 'Activities' }, usd: 30 },
+      ],
+      flight: { ar: 'الطيران من القاهرة لروما ذهاب وعودة غالباً بين 350 و 650 دولار.', en: 'Return flights Cairo–Rome usually run $350–650.' },
+    },
+    faq: [
+      { q: { ar: 'أطلع تأشيرة شنغن منين؟', en: 'Where do I apply for the Schengen visa?' }, a: { ar: 'من القنصلية الإيطالية أو مركز التأشيرات المعتمد في بلدك، لأن إيطاليا هي البلد اللي هتقضي فيه أطول وقت. قدّم قبل السفر بشهر على الأقل.', en: "Through the Italian consulate or its authorised visa centre in your country, since Italy is where you'll spend the most time. Apply at least a month before travel." } },
+      { q: { ar: 'القطر ولا الطيران الداخلي؟', en: 'Train or domestic flights?' }, a: { ar: 'القطار السريع أحسن بكتير: من وسط المدينة لوسط المدينة، ومريح، وفي أسعار حلوة لو حجزت بدري.', en: 'High-speed trains win: city centre to city centre, comfortable, and cheap if booked early.' } },
+      { q: { ar: 'الأكل الحلال متوفر؟', en: 'Is halal food easy to find?' }, a: { ar: 'في روما وميلانو مطاعم حلال وعربية وتركية. البيتزا بالخضار والمكرونة بالسي فود والجبنة اختيارات سهلة في أي مكان.', en: 'Rome and Milan have halal, Arab and Turkish places. Vegetable pizza and seafood or cheese pasta are easy anywhere.' } },
+      { q: { ar: 'إزاي أوفّر؟', en: 'How can I save money?' }, a: { ar: 'اشرب قهوتك واقف في البار، كُل الغدا بدل العشا في المطاعم، واستخدم مياه النافورات العامة — مياهها نضيفة.', en: 'Drink your coffee standing at the bar, eat out at lunch rather than dinner, and refill at public fountains — the water is clean.' } },
+      { q: { ar: 'في نشالين؟', en: 'Are pickpockets a problem?' }, a: { ar: 'أيوه في الأماكن الزحمة والمترو في روما وفلورنسا. خلي الشنطة قدامك والموبايل في جيب مقفول.', en: 'Yes, in crowds and on the Rome and Florence metro. Keep your bag in front and your phone zipped away.' } },
+    ],
+    dayLabels: ['1–2', '3', '4–5', '6–7', '8–9'],
+    offersLink: 'offers?dest=europe',
+  },
+
+  switzerland: {
+    name: { ar: 'سويسرا', en: 'Switzerland' },
+    hero: 'px:40099965',
+    tagline: { ar: 'جبال الألب، بحيرات زي المراية، وقطارات بتعدّي من وسط اللوحة', en: 'Alpine peaks, mirror lakes and trains that run right through the postcard' },
+    intro: {
+      ar: 'سويسرا هي جنة الطبيعة في أوروبا: بحيرات صافية، قرى خشب، شلالات، وجبل الماترهورن. غالية شوية، بس بتذكرة قطار واحدة تتنقل في البلد كلها ومش هتحتاج عربية خالص.',
+      en: "Switzerland is Europe's nature paradise: clear lakes, timber villages, waterfalls and the Matterhorn. It's pricey, but one rail pass covers the whole country and you'll never need a car.",
+    },
+    facts: [
+      { icon: 'cal', k: { ar: 'أحسن وقت', en: 'Best time' }, v: { ar: 'يونيو – سبتمبر (والتلج ديسمبر – مارس)', en: 'Jun – Sep (snow Dec – Mar)' } },
+      { icon: 'clock', k: { ar: 'المدة المناسبة', en: 'Ideal length' }, v: { ar: '7 – 8 أيام', en: '7 – 8 days' } },
+      { icon: 'shield', k: { ar: 'التأشيرة', en: 'Visa' }, v: { ar: 'تأشيرة شنغن', en: 'Schengen visa' } },
+      { icon: 'money', k: { ar: 'العملة', en: 'Currency' }, v: { ar: 'فرنك سويسري (CHF)', en: 'Swiss franc (CHF)' } },
+      { icon: 'users', k: { ar: 'اللغة', en: 'Language' }, v: { ar: 'ألماني وفرنساوي وإيطالي، والإنجليزي منتشر', en: 'German, French, Italian; English widely spoken' } },
+      { icon: 'plane', k: { ar: 'المطار', en: 'Airports' }, v: { ar: 'زيورخ أو جنيف', en: 'Zurich or Geneva' } },
+    ],
+    days: [
+      {
+        place: { ar: 'لوسيرن', en: 'Lucerne' }, photo: 'px:27910257',
+        title: { ar: 'لوسيرن على البحيرة', en: 'Lakeside Lucerne' },
+        items: [
+          { ar: 'كوبري تشابل الخشب والمدينة القديمة', en: 'The wooden Chapel Bridge and the old town' },
+          { ar: 'رحلة مركب على بحيرة لوسيرن', en: 'A boat cruise on Lake Lucerne' },
+          { ar: 'طلعة جبل بيلاتوس أو تيتليس بالتلفريك', en: 'Cable car up Mount Pilatus or Titlis' },
+        ],
+        tip: { ar: 'تيتليس فيه تلج طول السنة — حلو لو مسافر في الصيف وعايز تشوف تلج.', en: 'Titlis has snow all year — great if you travel in summer and want snow.' },
+      },
+      {
+        place: { ar: 'إنترلاكن', en: 'Interlaken' }, photo: 'px:33315428',
+        title: { ar: 'إنترلاكن بين بحيرتين', en: 'Interlaken between two lakes' },
+        items: [
+          { ar: 'المدينة بين بحيرتي تون وبرينز الفيروزي', en: 'The town between turquoise Lakes Thun and Brienz' },
+          { ar: 'باراشوت فوق البحيرات للمغامرين', en: 'Paragliding over the lakes for the adventurous' },
+          { ar: 'قرية إيزلتفالد على بحيرة برينز', en: 'Iseltwald village on Lake Brienz' },
+        ],
+        tip: { ar: 'إنترلاكن قاعدة ممتازة — اسكن هنا وروح منها رحلات يومية.', en: 'Interlaken is the perfect base — stay here and day-trip from it.' },
+      },
+      {
+        place: { ar: 'لاوتربرونن', en: 'Lauterbrunnen' }, photo: 'px:14529749',
+        title: { ar: 'وادي الـ72 شلال ويونغفراو', en: 'Valley of 72 waterfalls & the Jungfrau' },
+        items: [
+          { ar: 'شلال شتاوباخ في قلب القرية', en: 'Staubbach Falls in the village centre' },
+          { ar: 'شلالات تروملباخ جوه الجبل', en: 'Trümmelbach Falls inside the mountain' },
+          { ar: 'قطار يونغفراو "قمة أوروبا" (اختياري وغالي)', en: 'The Jungfraujoch "Top of Europe" railway (optional, pricey)' },
+        ],
+        tip: { ar: 'شوف الجو على كاميرات القمة قبل ما تطلع — لو غيم مش هتشوف حاجة.', en: 'Check the summit webcams first — on a cloudy day you see nothing.' },
+      },
+      {
+        place: { ar: 'زيرمات', en: 'Zermatt' }, photo: 'px:29734955',
+        title: { ar: 'زيرمات وجبل الماترهورن', en: 'Zermatt & the Matterhorn' },
+        items: [
+          { ar: 'قرية من غير عربيات — بتوصلها بالقطار بس', en: 'A car-free village reached only by train' },
+          { ar: 'قطار جورنرجرات والمنظر على الماترهورن', en: 'The Gornergrat railway with Matterhorn views' },
+          { ar: 'ممشى البحيرات الخمسة وانعكاس الجبل في المية', en: 'The Five Lakes walk with the peak reflected in the water' },
+        ],
+        tip: { ar: 'الشروق على الماترهورن من القرية منظر مش هتنساه — اصحى بدري.', en: 'Sunrise on the Matterhorn from the village is unforgettable — get up early.' },
+      },
+    ],
+    budget: {
+      low: [
+        { k: { ar: 'السكن', en: 'Stay' }, usd: 90 },
+        { k: { ar: 'الأكل', en: 'Food' }, usd: 45 },
+        { k: { ar: 'المواصلات', en: 'Transport' }, usd: 40 },
+        { k: { ar: 'الأنشطة والدخول', en: 'Activities' }, usd: 20 },
+      ],
+      mid: [
+        { k: { ar: 'السكن', en: 'Stay' }, usd: 180 },
+        { k: { ar: 'الأكل', en: 'Food' }, usd: 80 },
+        { k: { ar: 'المواصلات', en: 'Transport' }, usd: 60 },
+        { k: { ar: 'الأنشطة والدخول', en: 'Activities' }, usd: 40 },
+      ],
+      flight: { ar: 'الطيران من القاهرة لزيورخ أو جنيف ذهاب وعودة غالباً بين 400 و 700 دولار.', en: 'Return flights Cairo–Zurich or Geneva usually run $400–700.' },
+    },
+    faq: [
+      { q: { ar: 'سويسرا في شنغن؟', en: 'Is Switzerland in Schengen?' }, a: { ar: 'أيوه. تأشيرة شنغن بتدخلك سويسرا، ولو سويسرا وجهتك الأساسية قدّم في السفارة أو مركز التأشيرات السويسري.', en: 'Yes. A Schengen visa covers Switzerland; if it is your main destination, apply through the Swiss embassy or its visa centre.' } },
+      { q: { ar: 'أشتري Swiss Travel Pass؟', en: 'Should I buy the Swiss Travel Pass?' }, a: { ar: 'غالباً أيوه لو هتتنقل كتير: بيغطي القطارات والباصات والمراكب ومتاحف كتير، وخصم على تلفريكات الجبال.', en: 'Usually yes if you move around a lot: it covers trains, buses, boats and many museums, with discounts on mountain cable cars.' } },
+      { q: { ar: 'سويسرا غالية قد إيه؟', en: 'How expensive is it?' }, a: { ar: 'من أغلى بلاد أوروبا. وفّر بالسوبر ماركت (Coop وMigros) للأكل، واسكن في قرى قريبة بدل المدن الكبيرة.', en: 'One of the priciest in Europe. Save with supermarket meals (Coop, Migros) and stay in villages rather than big cities.' } },
+      { q: { ar: 'الأكل الحلال متوفر؟', en: 'Is halal food easy to find?' }, a: { ar: 'في زيورخ وجنيف ولوسيرن مطاعم حلال وتركية ولبنانية. في القرى الجبلية الاختيارات أقل، فخلي معاك أكل خفيف.', en: 'Zurich, Geneva and Lucerne have halal, Turkish and Lebanese spots. Mountain villages have fewer options, so carry snacks.' } },
+      { q: { ar: 'ألبس إيه في الجبل؟', en: 'What to wear in the mountains?' }, a: { ar: 'حتى في الصيف خد جاكيت وجزمة مشي مريحة. الجو فوق القمم ممكن يكون تحت الصفر.', en: 'Even in summer bring a jacket and good walking shoes. It can be below zero on the summits.' } },
+    ],
+    dayLabels: ['1–2', '3', '4–5', '6–7'],
+    offersLink: 'offers?dest=europe',
+  },
+
+  morocco: {
+    name: { ar: 'المغرب', en: 'Morocco' },
+    hero: 'px:35752246',
+    tagline: { ar: 'أسواق مراكش، صحرا مرزوقة، وشفشاون الزرقا', en: "Marrakech souks, Merzouga's dunes and blue Chefchaouen" },
+    intro: {
+      ar: 'المغرب قريب في الروح والأكل واللغة، ومختلف تماماً في الألوان والمعمار. من صخب جامع الفنا لهدوء الصحرا تحت النجوم، ومن مدابغ فاس لحواري شفشاون الزرقا.',
+      en: 'Morocco feels familiar in spirit, food and language, yet completely different in colour and architecture — from the buzz of Jemaa el-Fnaa to a silent desert night under the stars.',
+    },
+    facts: [
+      { icon: 'cal', k: { ar: 'أحسن وقت', en: 'Best time' }, v: { ar: 'مارس – مايو، سبتمبر – نوفمبر', en: 'Mar – May, Sep – Nov' } },
+      { icon: 'clock', k: { ar: 'المدة المناسبة', en: 'Ideal length' }, v: { ar: '8 – 10 أيام', en: '8 – 10 days' } },
+      { icon: 'shield', k: { ar: 'التأشيرة', en: 'Visa' }, v: { ar: 'حسب الجنسية — شوف تحت', en: 'Depends on nationality — see below' } },
+      { icon: 'money', k: { ar: 'العملة', en: 'Currency' }, v: { ar: 'درهم مغربي (MAD)', en: 'Moroccan dirham (MAD)' } },
+      { icon: 'users', k: { ar: 'اللغة', en: 'Language' }, v: { ar: 'عربي ودارجة وأمازيغي وفرنساوي', en: 'Arabic, Darija, Amazigh & French' } },
+      { icon: 'plane', k: { ar: 'المطار', en: 'Airports' }, v: { ar: 'مراكش، الدار البيضاء، فاس', en: 'Marrakech, Casablanca, Fes' } },
+    ],
+    days: [
+      {
+        place: { ar: 'مراكش', en: 'Marrakech' }, photo: 'px:17649841',
+        title: { ar: 'مراكش الحمرا', en: 'Marrakech, the red city' },
+        items: [
+          { ar: 'ساحة جامع الفنا بالليل وجامع الكتبية', en: 'Jemaa el-Fnaa at night and the Koutoubia Mosque' },
+          { ar: 'قصر الباهية وحديقة ماجوريل', en: 'Bahia Palace and the Majorelle Garden' },
+          { ar: 'الأسواق والحمام المغربي التقليدي', en: 'The souks and a traditional hammam' },
+        ],
+        tip: { ar: 'اسكن في رياض جوه المدينة القديمة — التجربة نفسها جزء من الرحلة.', en: 'Stay in a riad inside the medina — the experience is part of the trip.' },
+      },
+      {
+        place: { ar: 'صحراء مرزوقة', en: 'Merzouga' }, photo: 'px:30628808',
+        title: { ar: 'ليلة في الصحرا الكبرى', en: 'A night in the Sahara' },
+        items: [
+          { ar: 'طريق جبال الأطلس وقصبة آيت بن حدو', en: 'Over the Atlas Mountains via Aït Benhaddou' },
+          { ar: 'ركوب الجمال وقت الغروب على كثبان عرق الشبي', en: 'A sunset camel ride over the Erg Chebbi dunes' },
+          { ar: 'مبيت في مخيم وسط الرمال تحت النجوم', en: 'A night in a desert camp under the stars' },
+        ],
+        tip: { ar: 'الرحلة من مراكش طويلة (3 أيام رايح جاي) — خدها مع شركة منظمة.', en: 'It is a long journey from Marrakech (3 days round trip) — go with an organised tour.' },
+      },
+      {
+        place: { ar: 'فاس', en: 'Fes' }, photo: 'px:38112164',
+        title: { ar: 'فاس العتيقة ومدابغها', en: 'Ancient Fes & its tanneries' },
+        items: [
+          { ar: 'المدينة القديمة — أكبر منطقة مشاة في العالم', en: "The medina — the world's largest car-free urban area" },
+          { ar: 'مدبغة الشوارة من فوق السطوح', en: 'The Chouara tannery from the rooftops' },
+          { ar: 'جامع القرويين، أقدم جامعة في العالم', en: 'Al-Qarawiyyin, the oldest university in the world' },
+        ],
+        tip: { ar: 'خد مرشد رسمي لأول يوم — الحواري متاهة حقيقية.', en: 'Hire an official guide for the first day — the alleys are a true maze.' },
+      },
+      {
+        place: { ar: 'شفشاون', en: 'Chefchaouen' }, photo: 'px:33912190',
+        title: { ar: 'شفشاون اللؤلؤة الزرقا', en: 'Chefchaouen, the blue pearl' },
+        items: [
+          { ar: 'تمشية في الحواري الزرقا من أولها لآخرها', en: 'Wander the blue lanes end to end' },
+          { ar: 'الجامع الإسباني والغروب على المدينة', en: 'The Spanish Mosque viewpoint at sunset' },
+          { ar: 'شلالات أقشور في الطبيعة القريبة', en: 'The nearby Akchour waterfalls' },
+        ],
+        tip: { ar: 'روح بدري الصبح قبل الزحمة عشان تاخد أحلى صور.', en: 'Go early in the morning before the crowds for the best photos.' },
+      },
+    ],
+    budget: {
+      low: [
+        { k: { ar: 'السكن', en: 'Stay' }, usd: 25 },
+        { k: { ar: 'الأكل', en: 'Food' }, usd: 15 },
+        { k: { ar: 'المواصلات', en: 'Transport' }, usd: 12 },
+        { k: { ar: 'الأنشطة والدخول', en: 'Activities' }, usd: 10 },
+      ],
+      mid: [
+        { k: { ar: 'السكن', en: 'Stay' }, usd: 70 },
+        { k: { ar: 'الأكل', en: 'Food' }, usd: 30 },
+        { k: { ar: 'المواصلات', en: 'Transport' }, usd: 25 },
+        { k: { ar: 'الأنشطة والدخول', en: 'Activities' }, usd: 25 },
+      ],
+      flight: { ar: 'الطيران من القاهرة للدار البيضاء ذهاب وعودة غالباً بين 350 و 600 دولار.', en: 'Return flights Cairo–Casablanca usually run $350–600.' },
+    },
+    faq: [
+      { q: { ar: 'إزاي أتنقل بين المدن؟', en: 'How do I get between cities?' }, a: { ar: 'في قطار مريح بين الدار البيضاء وفاس ومراكش وطنجة (والبراق السريع لطنجة). للصحرا وشفشاون الباصات (CTM) أو رحلة منظمة.', en: 'Comfortable trains link Casablanca, Fes, Marrakech and Tangier (with the Al Boraq high-speed line). For the desert and Chefchaouen, use CTM buses or a tour.' } },
+      { q: { ar: 'هفهم اللهجة؟', en: 'Will I understand the dialect?' }, a: { ar: 'الدارجة صعبة في الأول، بس أغلب الناس بيفهموا الفصحى والمصري من الأفلام والمسلسلات.', en: 'Darija is tough at first, but most people understand Modern Standard Arabic and Egyptian from films and TV.' } },
+      { q: { ar: 'إزاي أفاصل في السوق؟', en: 'How do I bargain in the souk?' }, a: { ar: 'ابدأ بحوالي تلت أو نص السعر الأول، وخليك هادي ومبتسم. لو مش عاجبك امشي — غالباً هينادوا عليك.', en: 'Open at a third to half of the first price, and stay calm and friendly. Walk away if unhappy — they often call you back.' } },
+      { q: { ar: 'أجيب كاش ولا فيزا؟', en: 'Cash or card?' }, a: { ar: 'الكاش أساسي في الأسواق والتاكسي. الفيزا ماشية في الفنادق والمطاعم الكبيرة، والـ ATM منتشرة.', en: 'Cash rules in souks and taxis. Cards work in hotels and bigger restaurants, and ATMs are everywhere.' } },
+      { q: { ar: 'الجو عامل إزاي في الصحرا؟', en: "What's the desert weather like?" }, a: { ar: 'حر جداً بالنهار في الصيف، وبارد جداً بالليل خصوصاً في الشتا. خد طبقات هدوم وجاكيت.', en: 'Very hot by day in summer and cold at night, especially in winter. Pack layers and a jacket.' } },
+    ],
+    dayLabels: ['1–3', '4–6', '7–8', '9'],
+    offersLink: 'offers?cat=abroad',
+  },
+
+  kenya: {
+    name: { ar: 'كينيا', en: 'Kenya' },
+    hero: 'px:37419265',
+    tagline: { ar: 'سفاري الماساي مارا، أفيال تحت كليمنجارو، وبحر المحيط الهندي', en: 'Maasai Mara safaris, elephants under Kilimanjaro and the Indian Ocean' },
+    intro: {
+      ar: 'كينيا هي أحسن مكان تعيش فيه سفاري حقيقي: الأسود والفهود والأفيال في الطبيعة، ومن يوليو لأكتوبر الهجرة الكبرى لملايين الحيوانات. وبعد السفاري تختم على شط ديناني الأبيض.',
+      en: 'Kenya is the place for a real safari: lions, cheetahs and elephants in the wild, and from July to October the Great Migration of millions of animals. Finish on the white sand of Diani Beach.',
+    },
+    facts: [
+      { icon: 'cal', k: { ar: 'أحسن وقت', en: 'Best time' }, v: { ar: 'يوليو – أكتوبر (الهجرة)، يناير – فبراير', en: 'Jul – Oct (migration), Jan – Feb' } },
+      { icon: 'clock', k: { ar: 'المدة المناسبة', en: 'Ideal length' }, v: { ar: '8 – 10 أيام', en: '8 – 10 days' } },
+      { icon: 'shield', k: { ar: 'الدخول', en: 'Visa' }, v: { ar: 'تصريح إلكتروني eTA أو من غير تأشيرة', en: 'eTA online, or visa-free' } },
+      { icon: 'money', k: { ar: 'العملة', en: 'Currency' }, v: { ar: 'شلن كيني (KES)', en: 'Kenyan shilling (KES)' } },
+      { icon: 'users', k: { ar: 'اللغة', en: 'Language' }, v: { ar: 'إنجليزي وسواحيلي', en: 'English & Swahili' } },
+      { icon: 'plane', k: { ar: 'المطار', en: 'Airports' }, v: { ar: 'نيروبي (JKIA) أو مومباسا', en: 'Nairobi (JKIA) or Mombasa' } },
+    ],
+    days: [
+      {
+        place: { ar: 'نيروبي', en: 'Nairobi' }, photo: 'px:29506189',
+        title: { ar: 'نيروبي: سفاري جنب العاصمة', en: 'Nairobi: a safari beside the capital' },
+        items: [
+          { ar: 'حديقة نيروبي الوطنية — حيوانات وورا منها ناطحات سحاب', en: 'Nairobi National Park — wildlife with skyscrapers behind' },
+          { ar: 'ملجأ صغار الأفيال وقت الرضاعة', en: 'The baby elephant orphanage at feeding time' },
+          { ar: 'مركز الزرافات وتأكّلها بإيدك', en: 'The Giraffe Centre — feed them by hand' },
+        ],
+        tip: { ar: 'خد خط موبايل Safaricom من المطار — الفلوس والدفع كله بـ M-Pesa.', en: 'Get a Safaricom SIM at the airport — payments run on M-Pesa.' },
+      },
+      {
+        place: { ar: 'الماساي مارا', en: 'Maasai Mara' }, photo: 'px:26052417',
+        title: { ar: 'سفاري الماساي مارا', en: 'Safari in the Maasai Mara' },
+        items: [
+          { ar: 'جولات سفاري الصبح بدري وبعد العصر', en: 'Game drives at dawn and late afternoon' },
+          { ar: 'الأسود والفهود والأفيال و"الخمسة الكبار"', en: 'Lions, cheetahs, elephants and the "Big Five"' },
+          { ar: 'عبور الحيوانات لنهر مارا (يوليو – أكتوبر)', en: 'The Mara River crossings (July – October)' },
+          { ar: 'اختياري: بالون فوق السهول مع الشروق', en: 'Optional: a sunrise balloon over the plains' },
+        ],
+        tip: { ar: 'رسوم دخول المحمية غالية وبتزيد في موسم الهجرة — احسبها في الميزانية.', en: 'Reserve fees are high and rise in migration season — budget for them.' },
+      },
+      {
+        place: { ar: 'أمبوسيلي', en: 'Amboseli' }, photo: 'px:26924191',
+        title: { ar: 'أفيال أمبوسيلي وكليمنجارو', en: 'Amboseli elephants & Kilimanjaro' },
+        items: [
+          { ar: 'قطعان أفيال كبيرة قدام جبل كليمنجارو', en: 'Big elephant herds in front of Mount Kilimanjaro' },
+          { ar: 'المستنقعات والطيور وفرس النهر', en: 'Swamps, birdlife and hippos' },
+          { ar: 'زيارة قرية من قرى الماساي', en: 'A visit to a Maasai village' },
+        ],
+        tip: { ar: 'الجبل بيبان أوضح بدري الصبح — بعد كده السحاب بيغطيه.', en: 'Kilimanjaro shows best at dawn — clouds cover it later.' },
+      },
+      {
+        place: { ar: 'شاطئ ديناني', en: 'Diani Beach' }, photo: 'px:13292007',
+        title: { ar: 'استرخاء على شط ديناني', en: 'Unwind on Diani Beach' },
+        items: [
+          { ar: 'طيران داخلي أو قطار SGR لمومباسا', en: 'Domestic flight or SGR train to Mombasa' },
+          { ar: 'رمل أبيض ومية فيروزي على المحيط الهندي', en: 'White sand and turquoise Indian Ocean water' },
+          { ar: 'غطس وسنوركل ورحلة مركب لمحمية كيسيتي', en: 'Snorkelling and a dhow trip to Kisite marine park' },
+        ],
+        tip: { ar: 'مومباسا ومنطقة الساحل فيها أكل حلال كتير ومساجد.', en: 'Mombasa and the coast have plenty of halal food and mosques.' },
+      },
+    ],
+    budget: {
+      low: [
+        { k: { ar: 'السكن', en: 'Stay' }, usd: 50 },
+        { k: { ar: 'الأكل', en: 'Food' }, usd: 20 },
+        { k: { ar: 'المواصلات', en: 'Transport' }, usd: 30 },
+        { k: { ar: 'السفاري ورسوم المحميات', en: 'Safari & park fees' }, usd: 100 },
+      ],
+      mid: [
+        { k: { ar: 'السكن', en: 'Stay' }, usd: 150 },
+        { k: { ar: 'الأكل', en: 'Food' }, usd: 40 },
+        { k: { ar: 'المواصلات', en: 'Transport' }, usd: 60 },
+        { k: { ar: 'السفاري ورسوم المحميات', en: 'Safari & park fees' }, usd: 220 },
+      ],
+      flight: { ar: 'في رحلات مباشرة من القاهرة لنيروبي، وذهاب وعودة غالباً بين 450 و 800 دولار.', en: 'Direct flights run Cairo–Nairobi; return fares usually $450–800.' },
+    },
+    faq: [
+      { q: { ar: 'محتاج تطعيمات؟', en: 'Do I need vaccinations?' }, a: { ar: 'شهادة الحمى الصفرا مطلوبة لو جاي من بلد فيها المرض، ومُستحسنة عموماً. كلّم دكتور عن دوا الملاريا قبل السفر بأسابيع.', en: 'A yellow fever certificate is required if arriving from an endemic country and is recommended anyway. Ask a doctor about malaria tablets weeks ahead.' } },
+      { q: { ar: 'السفاري لوحدي ولا مع شركة؟', en: 'Safari solo or with a company?' }, a: { ar: 'مع شركة أحسن بكتير: عربية 4×4 بسقف بيتفتح وسواق مرشد عارف الحيوانات فين. قارن عروض الشركات في رحّالة.', en: 'A company is far better: a pop-top 4×4 and a driver-guide who knows where the animals are. Compare agency offers on Rahhala.' } },
+      { q: { ar: 'هل كينيا آمنة؟', en: 'Is Kenya safe?' }, a: { ar: 'مناطق السفاري والساحل السياحي آمنة مع الشركات المعروفة. في نيروبي استخدم Uber أو Bolt بالليل وما تمشيش بحاجات غالية.', en: 'Safari areas and the tourist coast are safe with reputable operators. In Nairobi use Uber or Bolt at night and keep valuables out of sight.' } },
+      { q: { ar: 'ألبس إيه في السفاري؟', en: 'What to wear on safari?' }, a: { ar: 'ألوان هادية (بيج وزيتي)، جاكيت للصبح البدري، قبعة ونضارة شمس، وكريم ضد الناموس.', en: 'Neutral colours (beige, olive), a jacket for chilly dawns, a hat, sunglasses and insect repellent.' } },
+      { q: { ar: 'إمتى أشوف الهجرة الكبرى؟', en: 'When can I see the Great Migration?' }, a: { ar: 'في الماساي مارا تقريباً من يوليو لأكتوبر، وعبور النهر غالباً في أغسطس وسبتمبر. احجز بدري لأنه أعلى موسم.', en: 'In the Maasai Mara roughly July to October, with river crossings mostly in August and September. Book early — it is peak season.' } },
+    ],
+    dayLabels: ['1', '2–4', '5–6', '7–9'],
+    offersLink: 'offers?cat=abroad',
+  },
 };
 
-export const GUIDE_ORDER = ['georgia', 'armenia', 'egypt'];
+export const GUIDE_ORDER = ['georgia', 'armenia', 'egypt', 'italy', 'switzerland', 'morocco', 'kenya'];

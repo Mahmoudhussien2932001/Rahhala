@@ -37,11 +37,18 @@ export const HELD = [
   { k: 'us', ar: 'تأشيرة أمريكا سارية', en: 'Valid US visa' },
   { k: 'uk', ar: 'تأشيرة بريطانيا سارية', en: 'Valid UK visa' },
   { k: 'schengen', ar: 'تأشيرة شنغن سارية', en: 'Valid Schengen visa' },
-  { k: 'west', ar: 'إقامة في أمريكا أو بريطانيا أو أوروبا', en: 'Residence in the US, UK or EU' },
+  { k: 'euRes', ar: 'إقامة في دولة أوروبية (شنغن)', en: 'Residence in a Schengen / EU country' },
+  { k: 'usukRes', ar: 'إقامة في أمريكا أو بريطانيا', en: 'Residence in the US or UK' },
   { k: 'gcc', ar: 'إقامة في دولة خليجية', en: 'Gulf (GCC) residence permit' },
 ];
 
 const GCC = ['sa', 'ae', 'kw', 'qa', 'bh', 'om'];
+const ALL = NATIONALITIES.map((x) => x.code);
+const ANY_HELD = ['us', 'uk', 'schengen', 'euRes', 'usukRes', 'gcc'];
+const SCHENGEN_BASE = () => ({
+  ...Object.fromEntries(ALL.map((c) => [c, r('embassy')])),
+  ae: r('free', { stay: { ar: '90 يوم في أي 180 يوم', en: '90 days in any 180' } }),
+});
 const r = (status, extra = {}) => ({ status, ...extra });
 const n = (ar, en) => ({ ar, en });
 
@@ -69,12 +76,29 @@ const BASE = {
     iq: r('evisa', { verify: true, note: n('للسياحة من سن 16 لـ 60.', 'For tourists aged 16–60.') }),
     ...Object.fromEntries(['sy', 'sd', 'ye', 'ps'].map((c) => [c, r('embassy', { note: n('محتاجة موافقة أمنية مسبقة.', 'Requires prior security approval.') })])),
   },
+  italy: SCHENGEN_BASE(),
+  switzerland: SCHENGEN_BASE(),
+  morocco: {
+    ma: r('home'),
+    ...Object.fromEntries([...GCC, 'tn'].map((c) => [c, r('free', { stay: n('لحد 90 يوم', 'up to 90 days') })])),
+    dz: r('free', { stay: n('لحد 90 يوم', 'up to 90 days'), verify: true, note: n('في فحص إضافي عند الدخول أحياناً — اتأكد قبل السفر.', 'Extra checks at entry are sometimes reported — confirm before travel.') }),
+    jo: r('evisa', { verify: true }),
+    eg: r('embassy', { verify: true, note: n('لو معاك تأشيرة أو إقامة من أمريكا أو بريطانيا أو شنغن تقدر تطلع تأشيرة إلكترونية بدل السفارة.', 'With a US, UK or Schengen visa or residence you can use the e-Visa instead of the embassy.') }),
+    ...Object.fromEntries(['sy', 'ps'].map((c) => [c, r('embassy')])),
+    ly: r('check', { note: n('الإعفاء من التأشيرة لليبيين اتلغى في 2014.', 'Visa exemption for Libyans was cancelled in 2014.') }),
+  },
+  kenya: {
+    ...Object.fromEntries(ALL.map((c) => [c, r('evisa', { note: n('تصريح سفر إلكتروني (eTA) — قدّم قبل السفر بـ 3 أيام على الأقل.', 'Electronic Travel Authorisation (eTA) — apply at least 3 days before travel.') })])),
+    ...Object.fromEntries(['eg', 'dz', 'dj', 'mr', 'ma', 'sd'].map((c) => [c, r('free', { stay: n('لحد 60 يوم', 'up to 60 days') })])),
+    km: r('free', { stay: n('لحد 90 يوم', 'up to 90 days') }),
+    tn: r('free', { verify: true, note: n('أغلب الجنسيات الأفريقية معفية من التصريح — اتأكد من موقع eTA.', 'Most African nationals are eTA-exempt — confirm on the eTA site.') }),
+  },
 };
 
 // Holding these visas / permits improves the rule (only if it beats the base rule).
 const HELD_RULES = {
   georgia: {
-    keys: ['us', 'uk', 'schengen', 'west', 'gcc'],
+    keys: ANY_HELD,
     result: r('free', {
       stay: n('90 يوم في أي 180 يوم', '90 days in any 180'),
       via: true,
@@ -82,14 +106,14 @@ const HELD_RULES = {
     }),
   },
   armenia: {
-    keys: ['us', 'uk', 'schengen', 'west', 'gcc'],
+    keys: ANY_HELD,
     result: r('voa', {
       via: true, verify: true,
       note: n('بتطلع التأشيرة في المطار. أصحاب إقامات الخليج (صالحة 6 شهور على الأقل) ممكن يدخلوا من غير تأشيرة لحد يوليو 2027 — اتأكد قبل السفر.', 'You get the visa at the airport. Gulf residence holders (valid 6+ months) may enter visa-free until July 2027 — confirm before travel.'),
     }),
   },
   egypt: {
-    keys: ['us', 'uk', 'schengen', 'west', 'gcc'],
+    keys: ANY_HELD,
     exclude: ['ps', 'sd', 'sy'],
     result: r('voa', {
       stay: n('لحد 30 يوم', 'up to 30 days'),
@@ -97,12 +121,31 @@ const HELD_RULES = {
       note: n('التأشيرة لازم تكون مستخدمة قبل كده، والإقامة صالحة 6 شهور على الأقل. خلي معاك تذكرة رجوع وحجز فندق.', 'The visa must have been used before, and the permit valid for 6+ months. Carry a return ticket and hotel booking.'),
     }),
   },
+  ...Object.fromEntries(['italy', 'switzerland'].map((d) => [d, {
+    keys: ['schengen', 'euRes'],
+    result: r('free', {
+      stay: n('90 يوم في أي 180 يوم', '90 days in any 180'),
+      via: true,
+      note: n('تأشيرة الشنغن لازم تكون سارية ومتعددة الدخول (أو لسه ما استخدمتهاش)، والإقامة الأوروبية سارية.', 'Your Schengen visa must be valid and multiple-entry (or still unused), or your EU residence permit valid.'),
+    }),
+  }])),
+  morocco: {
+    keys: ANY_HELD,
+    exclude: ['sy', 'ps'],
+    result: r('evisa', {
+      via: true,
+      note: n('التأشيرة لازم تكون ملزوقة في الجواز أو كارت إقامة. من الخليج: الإقامة الإماراتية بس.', 'The visa must be stamped in your passport, or a residence card. From the Gulf: UAE residence only.'),
+    }),
+  },
 };
+
+// Older saved answers used one combined "west" residence option.
+const normalize = (held) => held.flatMap((h) => (h === 'west' ? ['usukRes'] : [h]));
 
 export function visaFor(nat, held = [], dest) {
   const base = BASE[dest]?.[nat] || r('check');
   const rule = HELD_RULES[dest];
-  if (rule && !rule.exclude?.includes(nat) && held.some((h) => rule.keys.includes(h))) {
+  if (rule && !rule.exclude?.includes(nat) && normalize(held).some((h) => rule.keys.includes(h))) {
     if (STATUS_RANK[rule.result.status] < STATUS_RANK[base.status]) return rule.result;
   }
   return base;
@@ -112,9 +155,20 @@ export const OFFICIAL = {
   georgia: { evisa: 'https://www.evisa.gov.ge', info: 'https://www.geoconsul.gov.ge' },
   armenia: { evisa: 'https://evisa.mfa.am', info: 'https://www.mfa.am/en/whoneedvisa' },
   egypt: { evisa: 'https://visa2egypt.gov.eg', info: 'https://visa2egypt.gov.eg' },
+  italy: { evisa: 'https://vistoperitalia.esteri.it', info: 'https://vistoperitalia.esteri.it' },
+  switzerland: { evisa: 'https://www.sem.admin.ch', info: 'https://www.sem.admin.ch' },
+  morocco: { evisa: 'https://www.acces-maroc.ma', info: 'https://www.acces-maroc.ma' },
+  kenya: { evisa: 'https://www.etakenya.go.ke', info: 'https://www.etakenya.go.ke' },
 };
+const SCHENGEN_DESTS = ['italy', 'switzerland'];
 
-const docsFor = (dest) => DOCS.map((d, i) => (i === 4 && dest !== 'georgia' ? n('تأمين صحي للسفر (مُستحسن)', 'Travel medical insurance (recommended)') : d));
+const docsFor = (dest) => DOCS.map((d, i) => {
+  if (i !== 4) return d;
+  if (dest === 'georgia') return d;
+  if (SCHENGEN_DESTS.includes(dest)) return n('تأمين سفر طبي بتغطية 30 ألف يورو على الأقل (إجباري للشنغن)', 'Travel medical insurance covering at least €30,000 (required for Schengen)');
+  if (dest === 'kenya') return n('تأمين صحي للسفر، وشهادة الحمى الصفرا لو جاي من بلد فيها المرض', 'Travel insurance, plus a yellow fever certificate if arriving from an endemic country');
+  return n('تأمين صحي للسفر (مُستحسن)', 'Travel medical insurance (recommended)');
+});
 
 const DOCS = [
   n('جواز سفر صالح 6 شهور على الأقل بعد تاريخ الرجوع', 'Passport valid for at least 6 months after your return date'),
@@ -133,6 +187,8 @@ export function visaSteps(status, dest) {
       armenia: n('الرسوم حوالي 7 يورو (21 يوم) أو 34 يورو (120 يوم). قدّم قبل السفر بـ 3 أيام عمل على الأقل.', 'About €7 (21 days) or €34 (120 days). Apply at least 3 working days before travel.'),
       egypt: n('الرسوم حوالي 25 دولار للدخول مرة واحدة.', 'About $25 for a single entry.'),
       georgia: n('الرسوم بتتدفع أونلاين، وقدّم قبل السفر بأسبوع على الأقل.', 'Pay the fee online, and apply at least a week before you travel.'),
+      kenya: n('الرسوم 32.5 دولار للدخول مرة واحدة. قدّم قبل السفر بـ 3 أيام على الأقل (ولحد 90 يوم قبلها)، وجهّز حجز الفندق.', '$32.50 for a single entry. Apply at least 3 days (and up to 90 days) before travel, with your hotel booking ready.'),
+      morocco: n('الرسوم بتتدفع أونلاين. قدّم بدري، والتأشيرة أو الإقامة اللي معاك لازم تكون سارية.', 'Pay the fee online. Apply early, and the visa or permit you hold must be valid.'),
     }[dest];
     return {
       link: o.evisa,
@@ -170,6 +226,9 @@ export function visaSteps(status, dest) {
         n('ما تحجزش طيران غير قابل للاسترداد قبل ما التأشيرة تطلع.', "Don't buy non-refundable flights until the visa is issued."),
       ],
       tip: n('شركات السياحة في رحّالة ممكن تساعدك في ملف التأشيرة مع حجز الرحلة.', 'Agencies on Rahhala can often handle the visa file with your trip booking.'),
+      fees: SCHENGEN_DESTS.includes(dest)
+        ? n('تأشيرة شنغن: الرسوم حوالي 90 يورو للكبار، وبتقدّم من مركز التأشيرات المعتمد (زي VFS أو TLS). قدّم قبل السفر بـ 15 يوم على الأقل ولحد 6 شهور، والرد عادةً خلال 15 يوم.', 'Schengen visa: about €90 for adults, submitted at the authorised visa centre (e.g. VFS or TLS). Apply at least 15 days and up to 6 months before travel; decisions usually take about 15 days.')
+        : null,
       docs: docsFor(dest),
     };
   }
