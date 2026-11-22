@@ -17,6 +17,7 @@ export function Photo({ src, alt = '', className = '', w = 1200, sizes = '(max-w
           sizes={sizes}
           alt={alt}
           loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
           decoding="async"
           onLoad={() => setState('ready')}
           onError={() => setState('error')}

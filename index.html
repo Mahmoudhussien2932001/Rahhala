@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,8 +9,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.pexels.com" />
+    <!-- First hero photo: start downloading before the JS runs. Keep in sync with HERO_SLIDES[0] in src/components/HeroSlider.jsx -->
+    <link rel="preload" as="image" href="https://images.pexels.com/photos/29095916/pexels-photo-29095916.jpeg?auto=compress&cs=tinysrgb&w=60" fetchpriority="high" />
+    <link rel="preload" as="image" fetchpriority="high"
+      href="https://images.pexels.com/photos/29095916/pexels-photo-29095916.jpeg?auto=compress&cs=tinysrgb&w=2000"
+      imagesrcset="https://images.pexels.com/photos/29095916/pexels-photo-29095916.jpeg?auto=compress&cs=tinysrgb&w=640 640w, https://images.pexels.com/photos/29095916/pexels-photo-29095916.jpeg?auto=compress&cs=tinysrgb&w=1000 1000w, https://images.pexels.com/photos/29095916/pexels-photo-29095916.jpeg?auto=compress&cs=tinysrgb&w=1600 1600w"
+      imagesizes="100vw" />
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700;800&family=Readex+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <title>رحّالة | قارن عروض شركات السياحة</title>
+    <title>Rahhala | Compare travel agency offers</title>
   </head>
   <body>
     <div id="root"></div>
