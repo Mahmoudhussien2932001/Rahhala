@@ -7,6 +7,7 @@ import { useUI, useModalClose } from '../../components/UI';
 import { CATS, CITIES, DESTS, FEATURES, PHOTO_LIBRARY } from '../../data/catalog';
 import { uid } from '../../lib/format';
 import { passHash } from '../../lib/hash';
+import { ROOM_TYPES } from '../../data/pricing';
 
 function compressImage(file) {
   return new Promise((resolve, reject) => {
@@ -22,6 +23,68 @@ function compressImage(file) {
     };
     img.onerror = reject; img.src = u;
   });
+}
+
+/* ---------- optional room / child prices + extras (see data/pricing.js) ---------- */
+
+const posNum = (v) => (v === '' || v === null || v === undefined || !(+v > 0) ? null : Math.round(+v));
+
+function cleanPricing(p) {
+  if (!p) return null;
+  const rooms = Object.fromEntries(ROOM_TYPES.filter((r) => r.k !== 'double').map((r) => [r.k, posNum(p.rooms?.[r.k])]).filter(([, v]) => v !== null));
+  const extras = (p.extras || [])
+    .map((x) => ({ id: x.id || uid('x'), name: { ar: String(x.name?.ar || '').trim(), en: String(x.name?.en || '').trim() }, price: posNum(x.price), per: x.per === 'booking' ? 'booking' : 'person' }))
+    .filter((x) => (x.name.ar || x.name.en) && x.price)
+    .map((x) => ({ ...x, name: { ar: x.name.ar || x.name.en, en: x.name.en || x.name.ar } }));
+  const child = posNum(p.child) ?? (p.child === 0 || p.child === '0' ? 0 : null);
+  const infant = p.infant === 0 || p.infant === '0' ? 0 : posNum(p.infant);
+  const out = { rooms, extras };
+  if (child !== null) out.child = child;
+  if (infant !== null) out.infant = infant;
+  return Object.keys(rooms).length || extras.length || 'child' in out || 'infant' in out ? out : null;
+}
+
+function PricingEditor({ pricing, base, onChange }) {
+  const { T } = useLang();
+  const p = pricing || { rooms: {}, extras: [] };
+  const upd = (patch) => onChange({ ...p, ...patch });
+  const setRoom = (k, v) => upd({ rooms: { ...(p.rooms || {}), [k]: v } });
+  const extras = p.extras || [];
+  const setExtra = (i, patch) => upd({ extras: extras.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
+  const has = !!pricing && (Object.values(p.rooms || {}).some((v) => v !== '' && v != null) || extras.length || p.child != null || p.infant != null);
+  const ph = base ? String(base) : T('السعر الأساسي', 'Base price');
+
+  return (
+    <details className="pricing-ed" open={has}>
+      <summary><Icon name="money" size={16} />{T('أسعار الغرف والأطفال والإضافات (اختياري)', 'Room, child & extras pricing (optional)')}</summary>
+      <p className="dim xs">{T('السعر الأساسي هو سعر الفرد في غرفة مزدوجة. أي خانة فاضية بتاخد السعر الأساسي.', 'The base price is per person in a double room. Any empty field uses the base price.')}</p>
+      <div className="row3">
+        {ROOM_TYPES.filter((r) => r.k !== 'double').map((r) => (
+          <label key={r.k}>{T(`غرفة ${r.ar} (للفرد)`, `${r.en} room (per person)`)}<input className="inp" type="number" min="0" placeholder={ph} value={p.rooms?.[r.k] ?? ''} onChange={(e) => setRoom(r.k, e.target.value)} /></label>
+        ))}
+      </div>
+      <div className="row2">
+        <label>{T('سعر الطفل (2–11 سنة)', 'Child price (2–11)')}<input className="inp" type="number" min="0" placeholder={ph} value={p.child ?? ''} onChange={(e) => upd({ child: e.target.value === '' ? null : e.target.value })} /></label>
+        <label>{T('سعر الرضيع (أقل من سنتين)', 'Infant price (under 2)')}<input className="inp" type="number" min="0" placeholder={T('زي سعر الطفل', 'Same as child')} value={p.infant ?? ''} onChange={(e) => upd({ infant: e.target.value === '' ? null : e.target.value })} /></label>
+      </div>
+      <div className="extras-ed">
+        <b className="small">{T('إضافات اختيارية للعميل', 'Optional extras for travelers')}</b>
+        {extras.map((x, i) => (
+          <div key={x.id || i} className="extra-row">
+            <input className="inp" placeholder={T('الاسم بالعربي', 'Name (Arabic)')} maxLength={50} value={x.name?.ar || ''} onChange={(e) => setExtra(i, { name: { ...x.name, ar: e.target.value } })} />
+            <input className="inp ltr" placeholder={T('الاسم بالإنجليزي', 'Name (English)')} maxLength={50} value={x.name?.en || ''} onChange={(e) => setExtra(i, { name: { ...x.name, en: e.target.value } })} />
+            <input className="inp" type="number" min="0" placeholder={T('السعر', 'Price')} value={x.price ?? ''} onChange={(e) => setExtra(i, { price: e.target.value })} />
+            <select className="sel" value={x.per || 'person'} onChange={(e) => setExtra(i, { per: e.target.value })}>
+              <option value="person">{T('للفرد', 'per person')}</option>
+              <option value="booking">{T('للحجز كله', 'per booking')}</option>
+            </select>
+            <button type="button" className="btn btn-danger btn-xs" aria-label={T('امسح', 'Remove')} onClick={() => upd({ extras: extras.filter((_, j) => j !== i) })}><Icon name="trash" size={15} /></button>
+          </div>
+        ))}
+        <button type="button" className="btn btn-ghost btn-sm" onClick={() => upd({ extras: [...extras, { id: uid('x'), name: { ar: '', en: '' }, price: '', per: 'person' }] })}><Icon name="plus" size={15} />{T('ضيف إضافة', 'Add extra')}</button>
+      </div>
+    </details>
+  );
 }
 
 export function OfferForm({ offer }) {
@@ -55,6 +118,7 @@ export function OfferForm({ offer }) {
       category: DESTS[o.dest]?.cat || o.category,
       title: { ar: o.title.ar.trim(), en: (o.title.en || '').trim() || o.title.ar.trim() },
       price: +o.price || 0, oldPrice: +o.oldPrice || null, nights: Math.max(1, +o.nights || 1), seats: Math.max(0, +o.seats || 0),
+      pricing: cleanPricing(o.pricing),
       views: offer?.views || 0, createdAt: offer?.createdAt || Date.now(), updatedAt: Date.now(),
     });
     toast(isNew ? T('العرض اتضاف', 'Offer added') : T('العرض اتعدّل', 'Offer updated'));
@@ -87,6 +151,7 @@ export function OfferForm({ offer }) {
           <label>{T('الأماكن المتاحة', 'Seats')}<input className="inp" type="number" min="0" required value={o.seats} onChange={(e) => set('seats', e.target.value)} /></label>
           <label>{T('ميعاد السفر', 'Departure')}<input className="inp" type="date" required value={o.date} onChange={(e) => set('date', e.target.value)} /></label>
         </div>
+        <PricingEditor pricing={o.pricing} base={+o.price || 0} onChange={(p) => set('pricing', p)} />
         <label>{T('العرض بيشمل', 'Includes')}</label>
         <div className="feat-pick">
           {Object.entries(FEATURES).map(([k, f]) => (

@@ -1096,3 +1096,61 @@ a.box.agency-row { color: inherit }
   .share-menu a, .share-menu button { padding: 13px 12px; font-size: 15px }
 }
 @keyframes sheetUp { from { transform: translateY(20px); opacity: 0 } }
+
+/* ---------- Installments + trip cost calculator (components/Booking.jsx, data/pricing.js) ---------- */
+.price .per-month { display: block; margin-top: 2px; font-size: 11.5px; color: var(--teal); font-weight: 500 }
+.inst { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--mint); color: #0B6E66 }
+.inst-row { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px }
+.inst-row b { font-family: var(--fh); font-size: 16px }
+.inst-row small { opacity: .75 }
+.inst-note { display: block; margin-top: 6px; font-size: 11.5px; line-height: 1.55; opacity: .85 }
+.inst.compact { margin-top: 10px; padding: 10px 12px }
+.inst.compact .inst-row b { font-size: 14.5px }
+
+.calc { gap: 14px }
+.calc-sec { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 8px }
+.calc-sec legend { font-size: 13px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; padding: 0 }
+.stp { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border-radius: 14px; background: var(--sand) }
+.stp-l { display: grid; line-height: 1.3 }
+.stp-l b { font-size: 14px; font-weight: 600 }
+.stp-l small { font-size: 11.5px; color: var(--ink3) }
+.stp-c { display: flex; align-items: center; gap: 4px; flex: none }
+.stp-c button { width: 34px; height: 34px; border-radius: 50%; background: var(--paper); border: 1px solid var(--line2); font-size: 18px; line-height: 1; display: grid; place-items: center; color: var(--ink); transition: border-color .2s, background .2s }
+.stp-c button:hover:not(:disabled) { border-color: var(--teal); color: var(--teal) }
+.stp-c button:disabled { opacity: .35; cursor: not-allowed }
+.stp-c output { min-width: 26px; text-align: center; font-weight: 700; font-family: var(--fh) }
+.room-pick { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px }
+.room-pick label { display: grid; gap: 2px; padding: 9px 10px; border-radius: 12px; border: 1.5px solid var(--line2); background: var(--paper); cursor: pointer; text-align: center; transition: border-color .2s, background .2s }
+.room-pick input, .extra-pick input[type=checkbox] { position: absolute; opacity: 0; pointer-events: none }
+.room-pick label:focus-within, .extra-pick label:focus-within { box-shadow: 0 0 0 3px rgba(20, 167, 157, .18) }
+.room-pick b { font-size: 13.5px; color: var(--ink) }
+.room-pick small { font-size: 11.5px; color: var(--ink3) }
+.room-pick label.on { border-color: var(--teal); background: var(--mint) }
+.room-pick label.on b { color: #0B6E66 }
+.extra-pick { display: grid; gap: 6px }
+.extra-pick label { position: relative; display: flex; flex-direction: row; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; border: 1.5px solid var(--line2); background: var(--paper); cursor: pointer; font-size: 13.5px; color: var(--ink); transition: border-color .2s, background .2s }
+.extra-pick label::before { content: ''; width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid var(--line2); flex: none; transition: .2s }
+.extra-pick label.on { border-color: var(--teal); background: var(--mint) }
+.extra-pick label.on::before { background: var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center / 12px no-repeat; border-color: var(--teal) }
+.extra-pick span { flex: 1 }
+.extra-pick small { color: var(--ink3); font-size: 12px; white-space: nowrap }
+.calc-sum { padding: 14px; border-radius: 16px; border: 1px dashed var(--line2); display: grid; gap: 6px; font-size: 13.5px }
+.cs-row { display: flex; justify-content: space-between; gap: 10px }
+.cs-row small { color: var(--ink3) }
+.cs-total { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-top: 8px; margin-top: 2px; border-top: 1px solid var(--line) }
+.cs-total span { font-weight: 600 }
+.cs-total b { font-family: var(--fh); font-size: 22px; color: var(--ocean) }
+
+.bd-sum { color: var(--teal); margin-top: 2px; max-width: 260px }
+.pricing-ed { border: 1px solid var(--line2); border-radius: 16px; padding: 4px 14px; background: var(--sand) }
+.pricing-ed[open] { padding-bottom: 14px }
+.pricing-ed summary { display: flex; align-items: center; gap: 8px; padding: 10px 0; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--ink) }
+.pricing-ed > * + * { margin-top: 10px }
+.extras-ed { display: grid; gap: 8px }
+.extra-row { display: grid; grid-template-columns: 1.2fr 1.2fr .8fr .9fr auto; gap: 6px; align-items: center }
+.extras-ed > .btn { width: fit-content }
+@media (max-width: 640px) {
+  .extra-row { grid-template-columns: 1fr 1fr; padding: 8px; border-radius: 12px; background: var(--paper) }
+  .extra-row .btn { justify-self: end }
+}
+.pricing-ed .inp::placeholder { color: var(--ink3); opacity: .6 }

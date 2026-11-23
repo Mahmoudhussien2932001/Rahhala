@@ -8,6 +8,7 @@ import { navigate } from '../../lib/router';
 import { CATS, DESTS, STATUS } from '../../data/catalog';
 import { ago, fdate, fmt, shortDate } from '../../lib/format';
 import { OfferForm } from './forms';
+import { breakdownSummary } from '../../data/pricing';
 
 export function Kpi({ label, value, sub, icon, color }) {
   return (
@@ -121,12 +122,12 @@ export function InquiriesTable({ list, admin }) {
             const o = store.get('offers', q.offerId), a = store.agency(q.agencyId) || {};
             return (
               <tr key={q.id}>
-                <td><b className="fw5">{q.name}</b>{q.note && <div className="dim xs">{q.note}</div>}</td>
+                <td><b className="fw5">{q.name}</b>{q.breakdown && <div className="bd-sum xs">{breakdownSummary(q.breakdown, T, L)}</div>}{q.note && <div className="dim xs">{q.note}</div>}</td>
                 <td className="ltr start">{q.phone}</td>
                 <td className="maxw">{o ? L(o.title) : T('عرض محذوف', 'Deleted offer')}</td>
                 {admin && <td>{L(a.name) || '—'}</td>}
                 <td>{q.people}</td>
-                <td className="nowrap">{o ? fmt(o.price * q.people) : '—'}</td>
+                <td className="nowrap">{q.breakdown ? <>{fmt(q.breakdown.total)}<div className="dim xs">{T('حسبة العميل', 'Customer quote')}</div></> : o ? fmt(o.price * q.people) : '—'}</td>
                 <td className="dim nowrap">{ago(q.createdAt, lang)}</td>
                 <td>
                   <select className={`sel status st-${q.status}`} value={q.status} onChange={(e) => { store.update('inquiries', q.id, { status: e.target.value }); toast(T('الحالة اتغيّرت', 'Status updated')); }}>

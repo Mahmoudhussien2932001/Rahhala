@@ -3,7 +3,7 @@ import Icon from '../components/Icon';
 import { Photo, Reveal } from '../components/Media';
 import { PageHeader } from '../components/Layout';
 import { Avatar, CompareButton, OfferCard, Verified, stars } from '../components/Cards';
-import { BookingForm, waLink } from '../components/Booking';
+import { BookingForm, InstallmentNote, waLink } from '../components/Booking';
 import { ShareButton } from '../components/Share';
 import { useLang } from '../lib/i18n';
 import { useStore } from '../store/store';
@@ -152,7 +152,8 @@ export function OfferPage({ params }) {
 
           <aside className="op-side">
             <div className="box op-pricebox">
-              <div className="price"><small>{T('السعر للفرد', 'Price per person')}</small><div><b className="xl">{fmt(o.price)}</b> <small>{T('ج.م', 'EGP')}</small>{o.oldPrice ? <s>{fmt(o.oldPrice)}</s> : null}</div></div>
+              <div className="price"><small>{T('السعر للفرد (غرفة مزدوجة)', 'Price per person (double room)')}</small><div><b className="xl">{fmt(o.price)}</b> <small>{T('ج.م', 'EGP')}</small>{o.oldPrice ? <s>{fmt(o.oldPrice)}</s> : null}</div></div>
+              <InstallmentNote total={o.price} />
               <div className="mt12"><CompareButton id={o.id} variant="button" /></div>
             </div>
             <BookingForm offer={o} className="mt12" />

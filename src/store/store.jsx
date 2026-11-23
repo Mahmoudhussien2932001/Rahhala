@@ -28,7 +28,13 @@ function seedDb() {
 
 function loadDb() {
   const saved = storage.get(DB_KEY, null);
-  return saved && COLS.every((c) => saved[c]) ? saved : seedDb();
+  if (!(saved && COLS.every((c) => saved[c]))) return seedDb();
+  // Migration: give untouched demo offers the demo room/child pricing added later.
+  const seedOffers = Object.fromEntries(buildSeed().offers.map((o) => [o.id, o]));
+  Object.values(saved.offers).forEach((o) => {
+    if (o.pricing === undefined && !o.updatedAt && seedOffers[o.id]) o.pricing = seedOffers[o.id].pricing;
+  });
+  return saved;
 }
 
 const StoreCtx = createContext(null);

@@ -41,7 +41,7 @@ export default function AdminDashboard() {
   if (tab === 'overview') {
     const live = O.filter((o) => o.active !== false);
     const { days, labels } = last30(Q, lang);
-    const value = Q.filter((x) => x.status === 'closed').reduce((s, x) => s + (store.get('offers', x.offerId)?.price || 0) * x.people, 0);
+    const value = Q.filter((x) => x.status === 'closed').reduce((s, x) => s + (x.breakdown?.total ?? (store.get('offers', x.offerId)?.price || 0) * x.people), 0);
     const byCat = Object.keys(CATS).map((k) => [L(CATS[k]), Q.filter((x) => store.get('offers', x.offerId)?.category === k).length]);
     const byAg = A.map((a) => [L(a.name), Q.filter((x) => x.agencyId === a.id).length]).sort((x, y) => y[1] - x[1]).slice(0, 8);
     const byDest = Object.keys(DESTS).map((k) => [L(DESTS[k]), Q.filter((x) => store.get('offers', x.offerId)?.dest === k).length]).filter((r) => r[1]).sort((x, y) => y[1] - x[1]).slice(0, 6);

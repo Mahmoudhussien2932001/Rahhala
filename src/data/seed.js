@@ -62,6 +62,22 @@ const OFFERS = [
 
 const NAMES = ['أحمد سمير', 'منى عادل', 'كريم فتحي', 'سارة محمود', 'محمد طارق', 'نهى إبراهيم', 'يوسف علي', 'هبة سامي', 'عمر خالد', 'رنا مصطفى', 'مصطفى حسن', 'ياسمين أشرف', 'Omar Nabil', 'Laila Hany', 'خالد عبدالله', 'إيمان سعيد', 'شريف رأفت', 'دينا وليد', 'Ahmed Fawzy', 'نورهان جمال'];
 
+/* Demo room / child prices and extras (fictional, like all demo data). Chalets keep the base price only. */
+const r100 = (n) => Math.round(n / 100) * 100;
+const X = (id, ar, en, price, per = 'person') => ({ id, name: { ar, en }, price, per });
+function demoPricing(cat, p, oid) {
+  if (cat === 'stays') return null;
+  const base = {
+    umrah: { single: 1.35, triple: 0.92, quad: 0.86, child: 0.7, infant: 0.15, extras: [X(`${oid}-x1`, 'رحلة الطائف', 'Taif day trip', 1800)] },
+    beach: { single: 1.3, triple: 0.9, child: 0.5, infant: 0, extras: [X(`${oid}-x1`, 'رحلة سنوركل بالمركب', 'Snorkeling boat trip', 900), X(`${oid}-x2`, 'توصيل من وإلى المطار', 'Airport transfer', 600, 'booking')] },
+    abroad: { single: 1.25, triple: 0.93, child: 0.75, infant: 0.1, extras: [X(`${oid}-x1`, 'تأمين سفر', 'Travel insurance', 500), X(`${oid}-x2`, 'جولة في المدينة', 'City tour', 1200)] },
+    adventure: { child: 0.7, infant: 0, extras: [X(`${oid}-x1`, 'إيجار سليبنج باج', 'Sleeping bag rental', 150)] },
+  }[cat];
+  if (!base) return null;
+  const rooms = Object.fromEntries(['single', 'triple', 'quad'].filter((k) => base[k]).map((k) => [k, r100(p * base[k])]));
+  return { rooms, child: r100(p * base.child), infant: r100(p * base.infant), extras: base.extras };
+}
+
 export function buildSeed() {
   const now = Date.now(), day = 864e5;
   let s = 42;
@@ -79,6 +95,7 @@ export function buildSeed() {
       date: new Date(now + d * day).toISOString().slice(0, 10),
       img: `px:${photos[pi % photos.length]}`, featured: !!featured, active: true,
       views: Math.round(120 + rnd() * 900), createdAt: now - (45 - i) * day,
+      pricing: demoPricing(DESTS[dest].cat, price, id),
     };
   });
 

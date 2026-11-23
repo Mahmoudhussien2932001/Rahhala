@@ -6,6 +6,7 @@ import { useUI } from './UI';
 import { CATS, CITIES, DESTS } from '../data/catalog';
 import { daysTo, discount, fdate, fmt } from '../lib/format';
 import { OfferModal, AgencyModal, DestModal } from './Modals';
+import { fromMonthly } from '../data/pricing';
 
 export const stars = (n) => '★'.repeat(Math.round(n || 0)) + '☆'.repeat(5 - Math.round(n || 0));
 
@@ -38,6 +39,7 @@ export function OfferCard({ offer: o, i = 0, list = false }) {
   const { open } = useUI();
   const a = store.agency(o.agencyId) || {};
   const d = discount(o), left = daysTo(o.date);
+  const inst = fromMonthly(o);
   return (
     <Reveal as="article" delay={(i % 4) * 70} className={`ocard ${list ? 'list' : ''}`} onClick={() => open(() => <OfferModal id={o.id} />, { size: 'lg' })}>
       <div className="ph">
@@ -67,6 +69,7 @@ export function OfferCard({ offer: o, i = 0, list = false }) {
           <div className="price">
             <small>{T('للفرد من', 'From / person')}</small>
             <div><b>{fmt(o.price)}</b> <small>{T('ج.م', 'EGP')}</small>{o.oldPrice ? <s>{fmt(o.oldPrice)}</s> : null}</div>
+            <small className="per-month" title={T('تقسيط تقديري', 'Estimated installment')}>{T('أو من', 'or from')} {fmt(inst.amount)} / {T('شهر', 'mo')}*</small>
           </div>
           <span className="chip-ag"><Avatar agency={a} /><span className="nm">{L(a.name)}</span>{a.verified && <Verified />}</span>
         </div>
