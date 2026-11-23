@@ -1212,3 +1212,30 @@ tr.al-ready td { background: #FFF8F6 }
 .btn-wa:hover { background: #1EBE5A }
 .wait-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; background: #EAF2FC; color: #2B6CB0; font-size: 12px; font-weight: 600; white-space: nowrap }
 .wait-pill.hot { background: #FDECEC; color: #C53030 }
+
+/* ---------- Umrah details + filters (components/Umrah.jsx, data/umrah.js) ---------- */
+.umrah-box { margin-bottom: 12px; border-color: #E8D9B5; background: linear-gradient(180deg, #FFFCF4, var(--paper)) }
+.umrah-box h4 { display: flex; align-items: center; gap: 8px; color: #8A6A1E }
+.um-places { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.um-place { display: grid; gap: 4px; padding: 12px 14px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line) }
+.um-city { font-size: 12px; color: var(--ink3) }
+.um-place b { font-size: 15px; line-height: 1.35 }
+.um-dist { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; font-size: 13.5px; color: #0B6E66 }
+.um-dist em { font-style: normal; font-size: 12px; color: var(--ink3) }
+.um-split { margin-top: 12px }
+.um-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; gap: 3px; background: var(--sand) }
+.um-bar i:first-child { background: #C9922E }
+.um-bar i:last-child { background: var(--teal) }
+.um-legend { display: flex; justify-content: space-between; margin-top: 6px; font-size: 13px; color: var(--ink2) }
+.um-legend span:first-child b { color: #A3741F }
+.um-legend span:last-child b { color: var(--teal) }
+.um-flight { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line2); font-size: 14px }
+.um-flight .icon { color: var(--sea) }
+.um-line { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px }
+.um-line span { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; background: #FBF3E0; color: #8A6A1E; font-size: 12px; font-weight: 500 }
+.umrah-filters { display: grid; gap: 8px; padding: 14px; border-radius: 16px; background: #FBF5E6; border: 1px solid #EBDCB8; animation: pageIn .35s var(--ease) both }
+.umrah-filters h4 { display: flex; align-items: center; gap: 6px; margin: 0; color: #8A6A1E; font-weight: 600 }
+.uf-l { font-size: 12.5px; color: var(--ink2); margin-top: 2px }
+.cmp-table tr.cmp-sec th { background: #FBF5E6; color: #8A6A1E; font-weight: 600; width: auto }
+.warn-line { display: flex; align-items: center; gap: 6px; color: #9A6400; background: #FDF4DF; padding: 6px 10px; border-radius: 10px }
+@media (max-width: 640px) { .um-places { grid-template-columns: 1fr } }

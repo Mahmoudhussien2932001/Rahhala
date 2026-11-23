@@ -62,6 +62,18 @@ const OFFERS = [
 
 const NAMES = ['أحمد سمير', 'منى عادل', 'كريم فتحي', 'سارة محمود', 'محمد طارق', 'نهى إبراهيم', 'يوسف علي', 'هبة سامي', 'عمر خالد', 'رنا مصطفى', 'مصطفى حسن', 'ياسمين أشرف', 'Omar Nabil', 'Laila Hany', 'خالد عبدالله', 'إيمان سعيد', 'شريف رأفت', 'دينا وليد', 'Ahmed Fawzy', 'نورهان جمال'];
 
+/* Demo Umrah details (fictional hotels and distances, like all demo data). */
+const U = (hotelMakkah, hotelMadinah, distanceHaram, distanceNabawi, nightsMakkah, nightsMadinah, flight, airline) =>
+  ({ hotelMakkah, hotelMadinah, distanceHaram, distanceNabawi, nightsMakkah, nightsMadinah, flight, airline });
+const DEMO_UMRAH = {
+  o01: U('Noor Al Haram Grand', 'Rawdat Al Nour Suites', 150, 200, 9, 5, 'direct', 'EgyptAir'),
+  o02: U('Al Sakeena Residence', 'Taiba Garden Inn', 1200, 900, 4, 5, 'transit', 'flynas'),
+  o03: U('Zamzam Pearl Hotel', 'Al Ansar Plaza', 600, 450, 6, 6, 'direct', 'Saudia'),
+  o04: U('Ajyad Family Inn', 'Quba Road Hotel', 1500, 1100, 5, 8, 'road', ''),
+  o05: U('Safa Tower Makkah', 'Al Rawda Palace', 100, 250, 8, 3, 'direct', 'EgyptAir'),
+  o06: U('Al Masfalah Suites', 'Sultana Court', 500, 350, 7, 4, 'direct', 'EgyptAir'),
+};
+
 /* Demo room / child prices and extras (fictional, like all demo data). Chalets keep the base price only. */
 const r100 = (n) => Math.round(n / 100) * 100;
 const X = (id, ar, en, price, per = 'person') => ({ id, name: { ar, en }, price, per });
@@ -96,6 +108,7 @@ export function buildSeed() {
       img: `px:${photos[pi % photos.length]}`, featured: !!featured, active: true,
       views: Math.round(120 + rnd() * 900), createdAt: now - (45 - i) * day,
       pricing: demoPricing(DESTS[dest].cat, price, id),
+      ...(DEMO_UMRAH[id] ? { umrah: DEMO_UMRAH[id] } : {}),
     };
   });
 

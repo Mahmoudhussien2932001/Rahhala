@@ -7,8 +7,9 @@ import { useLang } from '../lib/i18n';
 import { useStore } from '../store/store';
 import { CATS, CITIES, DESTS } from '../data/catalog';
 import { discount } from '../lib/format';
+import { DISTANCE_STEPS, NIGHT_SPLITS, fmtDistance, splitOf, umrahOf } from '../data/umrah';
 
-const EMPTY = { cats: [], dest: 'all', from: 'all', min: '', max: '', nights: 'all', verified: false, q: '', sort: 'featured' };
+const EMPTY = { cats: [], dest: 'all', from: 'all', min: '', max: '', nights: 'all', verified: false, q: '', sort: 'featured', haram: 'any', direct: false, split: 'any' };
 
 export default function Offers({ query }) {
   const { T, L } = useLang();
@@ -32,6 +33,8 @@ export default function Offers({ query }) {
 
   const set = (k, v) => setF((x) => ({ ...x, [k]: v }));
   const dests = Object.keys(DESTS).filter((k) => all.some((o) => o.dest === k));
+  // Umrah-only filters appear when Umrah is the selected trip type or Makkah is the destination.
+  const umrahMode = (f.cats.length === 1 && f.cats[0] === 'umrah') || f.dest === 'mecca';
 
   const list = useMemo(() => {
     const q = f.q.trim().toLowerCase(), min = +f.min || 0, max = +f.max || Infinity;
@@ -43,6 +46,12 @@ export default function Offers({ query }) {
       if (o.price < min || o.price > max) return false;
       if ((f.nights === 's' && o.nights > 3) || (f.nights === 'm' && (o.nights < 4 || o.nights > 7)) || (f.nights === 'l' && o.nights < 8)) return false;
       if (f.verified && !a?.verified) return false;
+      if (umrahMode) {
+        const u = umrahOf(o);
+        if (f.haram !== 'any' && !(u?.distanceHaram != null && u.distanceHaram <= +f.haram)) return false;
+        if (f.direct && u?.flight !== 'direct') return false;
+        if (f.split !== 'any' && splitOf(u) !== f.split) return false;
+      }
       if (q && !`${o.title.ar} ${o.title.en} ${DESTS[o.dest]?.ar} ${DESTS[o.dest]?.en} ${a?.name?.ar} ${a?.name?.en}`.toLowerCase().includes(q)) return false;
       return true;
     });
@@ -54,9 +63,10 @@ export default function Offers({ query }) {
       discount: (a, b) => discount(b) - discount(a),
       soon: (a, b) => String(a.date).localeCompare(b.date),
       rating: (a, b) => (store.agency(b.agencyId)?.rating || 0) - (store.agency(a.agencyId)?.rating || 0),
+      haram: (a, b) => (umrahOf(a)?.distanceHaram ?? Infinity) - (umrahOf(b)?.distanceHaram ?? Infinity),
     };
     return r.sort(by[f.sort] || by.featured);
-  }, [all, f, store]);
+  }, [all, f, store, umrahMode]);
 
   const headPhoto = f.dest !== 'all' ? `px:${DESTS[f.dest].photos[0]}` : f.cats.length === 1 ? CATS[f.cats[0]].photo : 'px:18886592';
   const headTitle = f.dest !== 'all' ? L(DESTS[f.dest]) : f.cats.length === 1 ? L(CATS[f.cats[0]]) : T('كل العروض', 'All offers');
@@ -88,6 +98,22 @@ export default function Offers({ query }) {
             <Select value={f.nights} onChange={(v) => set('nights', v)} ariaLabel={T('المدة', 'Duration')} options={[
               { value: 'all', label: T('أي مدة', 'Any') }, { value: 's', label: T('3 ليالي أو أقل', '3 nights or less') }, { value: 'm', label: T('4 - 7 ليالي', '4–7 nights') }, { value: 'l', label: T('أكتر من 7', '8+ nights') },
             ]} /></div>
+          {umrahMode && (
+            <div className="umrah-filters">
+              <h4><Icon name="moon" size={14} /> {T('فلاتر العمرة', 'Umrah filters')}</h4>
+              <label className="uf-l">{T('أقصى مسافة للحرم', 'Max distance to the Haram')}</label>
+              <Select value={f.haram} onChange={(v) => set('haram', v)} ariaLabel={T('أقصى مسافة للحرم', 'Max distance to the Haram')} options={[
+                { value: 'any', label: T('أي مسافة', 'Any distance') },
+                ...DISTANCE_STEPS.map((m) => ({ value: String(m), label: T(`لحد ${fmtDistance(m, T)}`, `Up to ${fmtDistance(m, T)}`) })),
+              ]} />
+              <label className="uf-l">{T('توزيع الليالي', 'Nights split')}</label>
+              <Select value={f.split} onChange={(v) => set('split', v)} ariaLabel={T('توزيع الليالي', 'Nights split')} options={[
+                { value: 'any', label: T('أي توزيع', 'Any split') },
+                ...Object.entries(NIGHT_SPLITS).map(([k, v]) => ({ value: k, label: L(v) })),
+              ]} />
+              <label className="toggle"><input type="checkbox" checked={f.direct} onChange={(e) => set('direct', e.target.checked)} /><i />{T('طيران مباشر بس', 'Direct flights only')}</label>
+            </div>
+          )}
           <label className="toggle"><input type="checkbox" checked={f.verified} onChange={(e) => set('verified', e.target.checked)} /><i />{T('شركات موثّقة بس', 'Verified agencies only')}</label>
           <button className="btn btn-ghost btn-sm" onClick={() => setF(EMPTY)}><Icon name="reset" />{T('امسح الفلاتر', 'Clear filters')}</button>
         </aside>
@@ -103,6 +129,7 @@ export default function Offers({ query }) {
                 { value: 'discount', label: T('أكبر خصم', 'Biggest discount') },
                 { value: 'soon', label: T('الأقرب موعداً', 'Soonest') },
                 { value: 'rating', label: T('تقييم الشركة', 'Agency rating') },
+                ...(umrahMode ? [{ value: 'haram', label: T('الأقرب للحرم', 'Closest to the Haram') }] : []),
               ]} />
               <div className="seg">
                 <button className={layout === 'grid' ? 'on' : ''} onClick={() => setLayout('grid')} title="Grid"><Icon name="grid" /></button>

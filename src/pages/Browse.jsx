@@ -10,6 +10,7 @@ import { navigate } from '../lib/router';
 import { CITIES, DESTS, FEATURES } from '../data/catalog';
 import { discount, fdate, money } from '../lib/format';
 import { ExploreCard } from '../components/Explore';
+import { FLIGHT_TYPES, fmtDistance, umrahOf } from '../data/umrah';
 import { GROUPS, SCOPES } from '../data/explore';
 
 export function Destinations({ query }) {
@@ -77,6 +78,10 @@ export function Compare() {
   const minN = Math.min(...list.map((o) => o.price / o.nights));
   const maxR = Math.max(...list.map((o) => store.agency(o.agencyId)?.rating || 0));
   const maxF = Math.max(...list.map((o) => (o.features || []).length));
+  const hasUmrah = list.some((o) => umrahOf(o));
+  const dists = (k) => list.map((o) => umrahOf(o)?.[k]).filter((v) => v != null);
+  const minHaram = Math.min(...dists('distanceHaram'));
+  const minNabawi = Math.min(...dists('distanceNabawi'));
   const Row = ({ label, render, best }) => (
     <tr><th>{label}</th>{list.map((o) => <td key={o.id} className={best && best(o) ? 'best' : ''}>{render(o)}</td>)}</tr>
   );
@@ -108,6 +113,17 @@ export function Compare() {
               <Row label={T('السفر من', 'From')} render={(o) => L(CITIES[o.from])} />
               <Row label={T('الأماكن المتاحة', 'Seats left')} render={(o) => o.seats} />
               <Row label={T('تقييم الشركة', 'Agency rating')} render={(o) => { const a = store.agency(o.agencyId) || {}; return <><span className="stars">{stars(a.rating)}</span> {a.rating}</>; }} best={(o) => (store.agency(o.agencyId)?.rating || 0) === maxR} />
+              {hasUmrah && (
+                <>
+                  <tr className="cmp-sec"><th colSpan={list.length + 1}><Icon name="moon" size={15} /> {T('تفاصيل العمرة', 'Umrah details')}</th></tr>
+                  <Row label={T('فندق مكة', 'Makkah hotel')} render={(o) => umrahOf(o)?.hotelMakkah || '—'} />
+                  <Row label={T('المسافة للحرم', 'Distance to Haram')} render={(o) => (umrahOf(o)?.distanceHaram != null ? fmtDistance(umrahOf(o).distanceHaram, T) : '—')} best={(o) => umrahOf(o)?.distanceHaram != null && umrahOf(o).distanceHaram === minHaram} />
+                  <Row label={T('فندق المدينة', 'Madinah hotel')} render={(o) => umrahOf(o)?.hotelMadinah || '—'} />
+                  <Row label={T('المسافة للمسجد النبوي', "Distance to Prophet's Mosque")} render={(o) => (umrahOf(o)?.distanceNabawi != null ? fmtDistance(umrahOf(o).distanceNabawi, T) : '—')} best={(o) => umrahOf(o)?.distanceNabawi != null && umrahOf(o).distanceNabawi === minNabawi} />
+                  <Row label={T('الليالي مكة / المدينة', 'Nights Makkah / Madinah')} render={(o) => { const u = umrahOf(o); return u && u.nightsMakkah != null ? `${u.nightsMakkah} / ${u.nightsMadinah ?? '—'}` : '—'; }} />
+                  <Row label={T('السفر', 'Travel')} render={(o) => { const u = umrahOf(o); return u?.flight ? <>{L(FLIGHT_TYPES[u.flight])}{u.airline ? <div className="dim xs">{u.airline}</div> : null}</> : '—'; }} best={(o) => umrahOf(o)?.flight === 'direct'} />
+                </>
+              )}
               <Row label={T('بيشمل', 'Includes')} render={(o) => <div className="inc">{(o.features || []).map((k) => <span key={k}>{L(FEATURES[k]) || k}</span>)}</div>} best={(o) => (o.features || []).length === maxF} />
             </tbody>
           </table>

@@ -49,6 +49,7 @@ function loadDb() {
   const seedOffers = Object.fromEntries(buildSeed().offers.map((o) => [o.id, o]));
   Object.values(saved.offers).forEach((o) => {
     if (o.pricing === undefined && !o.updatedAt && seedOffers[o.id]) o.pricing = seedOffers[o.id].pricing;
+    if (o.umrah === undefined && !o.updatedAt && seedOffers[o.id]?.umrah) o.umrah = seedOffers[o.id].umrah;
   });
   return saved;
 }

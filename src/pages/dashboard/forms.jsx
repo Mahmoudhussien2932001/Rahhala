@@ -8,6 +8,7 @@ import { CATS, CITIES, DESTS, FEATURES, PHOTO_LIBRARY } from '../../data/catalog
 import { uid } from '../../lib/format';
 import { passHash } from '../../lib/hash';
 import { ROOM_TYPES } from '../../data/pricing';
+import { FLIGHT_TYPES } from '../../data/umrah';
 
 function compressImage(file) {
   return new Promise((resolve, reject) => {
@@ -87,6 +88,57 @@ function PricingEditor({ pricing, base, onChange }) {
   );
 }
 
+/* ---------- optional Umrah details (see data/umrah.js) ---------- */
+
+function cleanUmrah(u) {
+  if (!u) return null;
+  const n = (v) => (v === '' || v === null || v === undefined || Number.isNaN(+v) || +v < 0 ? null : Math.round(+v));
+  const out = {
+    hotelMakkah: String(u.hotelMakkah || '').trim().slice(0, 80),
+    hotelMadinah: String(u.hotelMadinah || '').trim().slice(0, 80),
+    distanceHaram: n(u.distanceHaram), distanceNabawi: n(u.distanceNabawi),
+    nightsMakkah: n(u.nightsMakkah), nightsMadinah: n(u.nightsMadinah),
+    flight: FLIGHT_TYPES[u.flight] ? u.flight : null,
+    airline: u.flight === 'road' ? '' : String(u.airline || '').trim().slice(0, 40),
+  };
+  return Object.values(out).some((v) => v !== null && v !== '') ? out : null;
+}
+
+function UmrahEditor({ umrah, nights, onChange }) {
+  const { T, L } = useLang();
+  const u = umrah || {};
+  const upd = (k, v) => onChange({ ...u, [k]: v });
+  const sum = (+u.nightsMakkah || 0) + (+u.nightsMadinah || 0);
+  const mismatch = (u.nightsMakkah !== undefined && u.nightsMakkah !== '' || u.nightsMadinah !== undefined && u.nightsMadinah !== '') && nights && sum !== nights;
+  return (
+    <details className="pricing-ed umrah-ed" open>
+      <summary><Icon name="moon" size={16} />{T('تفاصيل العمرة (اختياري، بتظهر للعملاء وفي الفلاتر)', 'Umrah details (optional — shown to travelers and used in filters)')}</summary>
+      <div className="row2">
+        <label>{T('فندق مكة', 'Makkah hotel')}<input className="inp" maxLength={80} value={u.hotelMakkah || ''} onChange={(e) => upd('hotelMakkah', e.target.value)} /></label>
+        <label>{T('فندق المدينة', 'Madinah hotel')}<input className="inp" maxLength={80} value={u.hotelMadinah || ''} onChange={(e) => upd('hotelMadinah', e.target.value)} /></label>
+      </div>
+      <div className="row2">
+        <label>{T('المسافة للحرم (متر)', 'Distance to the Haram (m)')}<input className="inp" type="number" min="0" value={u.distanceHaram ?? ''} onChange={(e) => upd('distanceHaram', e.target.value)} /></label>
+        <label>{T('المسافة للمسجد النبوي (متر)', "Distance to the Prophet's Mosque (m)")}<input className="inp" type="number" min="0" value={u.distanceNabawi ?? ''} onChange={(e) => upd('distanceNabawi', e.target.value)} /></label>
+      </div>
+      <div className="row2">
+        <label>{T('ليالي مكة', 'Nights in Makkah')}<input className="inp" type="number" min="0" value={u.nightsMakkah ?? ''} onChange={(e) => upd('nightsMakkah', e.target.value)} /></label>
+        <label>{T('ليالي المدينة', 'Nights in Madinah')}<input className="inp" type="number" min="0" value={u.nightsMadinah ?? ''} onChange={(e) => upd('nightsMadinah', e.target.value)} /></label>
+      </div>
+      {mismatch && <p className="warn-line xs"><Icon name="clock" size={13} />{T(`مجموع ليالي مكة والمدينة (${sum}) مختلف عن عدد ليالي العرض (${nights}).`, `Makkah + Madinah nights (${sum}) don't match the offer's nights (${nights}).`)}</p>}
+      <div className="row2">
+        <label>{T('نوع السفر', 'Travel type')}
+          <select className="sel" value={u.flight || ''} onChange={(e) => upd('flight', e.target.value)}>
+            <option value="">{T('— اختار —', '— choose —')}</option>
+            {Object.entries(FLIGHT_TYPES).map(([k, v]) => <option key={k} value={k}>{L(v)}</option>)}
+          </select>
+        </label>
+        {u.flight !== 'road' && <label>{T('شركة الطيران', 'Airline')}<input className="inp" maxLength={40} value={u.airline || ''} onChange={(e) => upd('airline', e.target.value)} placeholder="EgyptAir" /></label>}
+      </div>
+    </details>
+  );
+}
+
 export function OfferForm({ offer }) {
   const { T, L } = useLang();
   const store = useStore();
@@ -119,6 +171,7 @@ export function OfferForm({ offer }) {
       title: { ar: o.title.ar.trim(), en: (o.title.en || '').trim() || o.title.ar.trim() },
       price: +o.price || 0, oldPrice: +o.oldPrice || null, nights: Math.max(1, +o.nights || 1), seats: Math.max(0, +o.seats || 0),
       pricing: cleanPricing(o.pricing),
+      umrah: DESTS[o.dest]?.cat === 'umrah' ? cleanUmrah(o.umrah) : null,
       views: offer?.views || 0, createdAt: offer?.createdAt || Date.now(), updatedAt: Date.now(),
     });
     const willNotify = offer ? store.list('alerts').filter((x) => x.offerId === offer.id && x.status === 'waiting' && (x.kinds || ['price']).includes('price') && (+o.price || 0) < +x.priceAtSignup).length : 0;
@@ -154,6 +207,7 @@ export function OfferForm({ offer }) {
           <label>{T('الأماكن المتاحة', 'Seats')}<input className="inp" type="number" min="0" required value={o.seats} onChange={(e) => set('seats', e.target.value)} /></label>
           <label>{T('ميعاد السفر', 'Departure')}<input className="inp" type="date" required value={o.date} onChange={(e) => set('date', e.target.value)} /></label>
         </div>
+        {DESTS[o.dest]?.cat === 'umrah' && <UmrahEditor umrah={o.umrah} nights={+o.nights || 0} onChange={(u) => set('umrah', u)} />}
         <PricingEditor pricing={o.pricing} base={+o.price || 0} onChange={(p) => set('pricing', p)} />
         <label>{T('العرض بيشمل', 'Includes')}</label>
         <div className="feat-pick">

@@ -8,6 +8,7 @@ import { daysTo, discount, fdate, fmt } from '../lib/format';
 import { OfferModal, AgencyModal, DestModal } from './Modals';
 import { fromMonthly } from '../data/pricing';
 import { FavButton } from './Alerts';
+import { UmrahLine } from './Umrah';
 
 export const stars = (n) => '★'.repeat(Math.round(n || 0)) + '☆'.repeat(5 - Math.round(n || 0));
 
@@ -59,6 +60,7 @@ export function OfferCard({ offer: o, i = 0, list = false }) {
           <span><Icon name="moon" size={15} />{o.nights} {T('ليالي', 'nights')}</span>
           <span><Icon name="cal" size={15} />{fdate(o.date, lang)}</span>
         </div>
+        <UmrahLine offer={o} />
         {o.seats <= 6 ? (
           <div className="urgent">
             <span><Icon name="fire" size={15} />{T(`باقي ${o.seats} أماكن بس`, `Only ${o.seats} spots left`)}</span>

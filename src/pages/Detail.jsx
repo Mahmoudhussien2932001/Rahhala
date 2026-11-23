@@ -6,6 +6,7 @@ import { Avatar, CompareButton, OfferCard, Verified, stars } from '../components
 import { BookingForm, InstallmentNote, waLink } from '../components/Booking';
 import { ShareButton } from '../components/Share';
 import { AlertBox, FavButton } from '../components/Alerts';
+import { UmrahDetails } from '../components/Umrah';
 import { useLang } from '../lib/i18n';
 import { useStore } from '../store/store';
 import { Link, navigate } from '../lib/router';
@@ -135,6 +136,8 @@ export function OfferPage({ params }) {
                 <div key={k} className="op-fact"><i><Icon name={ic} size={18} /></i><div><span>{k}</span><b>{v}</b></div></div>
               ))}
             </div>
+
+            <UmrahDetails offer={o} />
 
             <div className="box">
               <h4>{T('العرض بيشمل', "What's included")}</h4>
