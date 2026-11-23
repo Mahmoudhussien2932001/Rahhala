@@ -51,10 +51,15 @@ export function Navbar({ route }) {
         <Link to="home" aria-label="Rahhala"><Brand /></Link>
         <nav className={`links ${menu ? 'open' : ''}`}>
           {links.map(([k, n, to]) => <Link key={k} to={to || k} className={route === k ? 'on' : ''}>{n}</Link>)}
+          <button type="button" className="mob-only xs-only menu-btn" onClick={store.openChooser}>{T('بتدوّر على سفر فين؟', 'Where to?')}</button>
           {!a && !store.isAdmin() && <Link to="login" className={`mob-only ${route === 'login' ? 'on' : ''}`}>{T('دخول الشركات', 'Agency login')}</Link>}
         </nav>
         <div className="actions">
-          <button className="lang-btn" onClick={store.openChooser} title={T('بتدوّر على سفر فين؟', 'Where to?')} aria-label={T('بتدوّر على سفر فين؟', 'Where to?')}><Icon name="compass" size={18} /></button>
+          <Link to="favorites" className={`lang-btn fav-nav ${route === 'favorites' ? 'on' : ''}`} title={T('المفضلة', 'Favorites')} aria-label={`${T('المفضلة', 'Favorites')} (${store.favorites.length})`}>
+            <Icon name="heart" size={18} style={store.favorites.length ? { fill: 'currentColor' } : undefined} />
+            {store.favorites.length > 0 && <span className="fav-count">{store.favorites.length}</span>}
+          </Link>
+          <button className="lang-btn hide-xs" onClick={store.openChooser} title={T('بتدوّر على سفر فين؟', 'Where to?')} aria-label={T('بتدوّر على سفر فين؟', 'Where to?')}><Icon name="compass" size={18} /></button>
           <button className="lang-btn" onClick={toggle} title="Language">{lang === 'ar' ? 'EN' : 'ع'}</button>
           {store.isAdmin() ? (
             <Link to="admin" className="btn btn-sun btn-sm"><Icon name="grid" /><span className="hide-sm">{T('لوحة الأدمن', 'Admin')}</span></Link>

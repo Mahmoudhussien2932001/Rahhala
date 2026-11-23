@@ -9,6 +9,7 @@ import { navigate } from '../../lib/router';
 import { CITIES } from '../../data/catalog';
 import { InquiriesTable, Kpi, OffersTable, SideNav, StatusTabs, countStatus, last30 } from './parts';
 import { OfferForm, PasswordForm } from './forms';
+import { AlertsPanel } from '../../components/Alerts';
 
 export default function AgencyDashboard() {
   const { T, L, lang } = useLang();
@@ -23,6 +24,8 @@ export default function AgencyDashboard() {
 
   const offers = store.list('offers').filter((o) => o.agencyId === a.id);
   const inqs = store.list('inquiries').filter((q) => q.agencyId === a.id);
+  const alerts = store.list('alerts').filter((x) => x.agencyId === a.id);
+  const readyAlerts = alerts.filter((x) => x.status === 'ready').length;
   const st = countStatus(inqs);
   const newOffer = () => open(() => <OfferForm />, { size: 'lg' });
 
@@ -30,6 +33,7 @@ export default function AgencyDashboard() {
     ['overview', T('نظرة عامة', 'Overview'), 'chart'],
     ['offers', T('عروضي', 'My offers'), 'tag'],
     ['inquiries', T('طلبات العملاء', 'Requests'), 'inbox', st.new],
+    ['alerts', T('قائمة الانتظار', 'Waiting list'), 'bell', readyAlerts],
     ['profile', T('بيانات الشركة', 'Company profile'), 'gear'],
   ];
   const who = <><Avatar agency={a} size="lg" /><div><b>{L(a.name)}</b><span>{a.verified ? T('شركة موثّقة ✓', 'Verified agency ✓') : T('في انتظار التوثيق', 'Pending verification')}</span></div></>;
@@ -72,6 +76,14 @@ export default function AgencyDashboard() {
       <>
         <div className="dhead"><div><div className="eyebrow">{inqs.length} {T('طلب', 'requests')} · {st.new} {T('جديد', 'new')}</div><h2>{T('طلبات العملاء', 'Customer requests')}</h2></div><StatusTabs value={status} onChange={setStatus} /></div>
         <div className="panel"><InquiriesTable list={l} /></div>
+      </>
+    );
+  } else if (tab === 'alerts') {
+    body = (
+      <>
+        <div className="dhead"><div><div className="eyebrow">{alerts.length} {T('مستني', 'waiting')} · {readyAlerts} {T('جاهز للتواصل', 'ready to contact')}</div><h2>{T('قائمة الانتظار', 'Waiting list')}</h2>
+          <p className="muted small">{T('ناس طلبوا تنبيه لو السعر نزل أو الأماكن قربت تخلص. لما تنزّل السعر، بيبقوا "جاهزين للتواصل" وتبعتلهم واتساب بضغطة.', 'People who asked to be told if the price drops or seats run low. Lower the price and they become "ready to contact" — message them in one click.')}</p></div></div>
+        <div className="panel"><AlertsPanel list={alerts} /></div>
       </>
     );
   } else {

@@ -7,6 +7,7 @@ import { CATS, CITIES, DESTS } from '../data/catalog';
 import { daysTo, discount, fdate, fmt } from '../lib/format';
 import { OfferModal, AgencyModal, DestModal } from './Modals';
 import { fromMonthly } from '../data/pricing';
+import { FavButton } from './Alerts';
 
 export const stars = (n) => '★'.repeat(Math.round(n || 0)) + '☆'.repeat(5 - Math.round(n || 0));
 
@@ -49,6 +50,7 @@ export function OfferCard({ offer: o, i = 0, list = false }) {
           {d ? <span className="badge hot">-{d}%</span> : o.featured ? <span className="badge hot">{T('مميز', 'Featured')}</span> : null}
         </div>
         <CompareButton id={o.id} />
+        <FavButton id={o.id} />
       </div>
       <div className="body">
         <h4><a href={`#/offer/${o.id}`} onClick={(e) => e.stopPropagation()}>{L(o.title)}</a></h4>

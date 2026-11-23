@@ -5,6 +5,7 @@ import { PageHeader } from '../components/Layout';
 import { Avatar, CompareButton, OfferCard, Verified, stars } from '../components/Cards';
 import { BookingForm, InstallmentNote, waLink } from '../components/Booking';
 import { ShareButton } from '../components/Share';
+import { AlertBox, FavButton } from '../components/Alerts';
 import { useLang } from '../lib/i18n';
 import { useStore } from '../store/store';
 import { Link, navigate } from '../lib/router';
@@ -119,7 +120,7 @@ export function OfferPage({ params }) {
                 </div>
                 <h1 className="op-title">{L(o.title)}</h1>
               </div>
-              <ShareButton to={`offer/${o.id}`} title={L(o.title)} line={priceLine} />
+              <div className="op-actions"><FavButton id={o.id} variant="button" /><ShareButton to={`offer/${o.id}`} title={L(o.title)} line={priceLine} /></div>
             </div>
 
             <div className="op-facts">
@@ -157,6 +158,7 @@ export function OfferPage({ params }) {
               <div className="mt12"><CompareButton id={o.id} variant="button" /></div>
             </div>
             <BookingForm offer={o} className="mt12" />
+            <AlertBox offer={o} />
           </aside>
         </div>
 

@@ -69,6 +69,7 @@ export function OffersTable({ list, admin }) {
   const mine = store.currentAgency();
   if (!list.length) return <div className="empty"><Icon name="tag" size={30} />{T('مفيش عروض. اضغط "عرض جديد" وضيف أول عرض.', 'No offers yet. Click "New offer" to add one.')}</div>;
   const leads = (id) => store.list('inquiries').filter((q) => q.offerId === id).length;
+  const waiting = (id) => { const l = store.list('alerts').filter((x) => x.offerId === id && x.status !== 'contacted'); return [l.length, l.filter((x) => x.status === 'ready').length]; };
   const del = async (o) => {
     if (mine && o.agencyId !== mine.id) return;
     if (await confirm(T(`هتمسح "${L(o.title)}" نهائي.`, `Delete "${L(o.title)}" permanently?`), T('امسح', 'Delete'))) { store.remove('offers', o.id); toast(T('العرض اتمسح', 'Offer deleted')); }
@@ -77,7 +78,7 @@ export function OffersTable({ list, admin }) {
     <div className="tbl-wrap">
       <table className="tbl">
         <thead><tr>
-          <th>{T('العرض', 'Offer')}</th>{admin && <th>{T('الشركة', 'Agency')}</th>}<th>{T('السعر', 'Price')}</th><th>{T('الأماكن', 'Seats')}</th><th>{T('الميعاد', 'Date')}</th><th>{T('مشاهدات', 'Views')}</th><th>{T('طلبات', 'Leads')}</th>{admin && <th>{T('مميز', 'Featured')}</th>}<th>{T('ظاهر', 'Live')}</th><th />
+          <th>{T('العرض', 'Offer')}</th>{admin && <th>{T('الشركة', 'Agency')}</th>}<th>{T('السعر', 'Price')}</th><th>{T('الأماكن', 'Seats')}</th><th>{T('الميعاد', 'Date')}</th><th>{T('مشاهدات', 'Views')}</th><th>{T('طلبات', 'Leads')}</th><th title={T('مستنيين تنبيه سعر أو أماكن', 'Waiting for a price or seats alert')}>{T('مستنيين', 'Waiting')}</th>{admin && <th>{T('مميز', 'Featured')}</th>}<th>{T('ظاهر', 'Live')}</th><th />
         </tr></thead>
         <tbody>
           {list.map((o) => {
@@ -91,6 +92,7 @@ export function OffersTable({ list, admin }) {
                 <td className="nowrap">{fdate(o.date, lang)}</td>
                 <td>{fmt(o.views || 0)}</td>
                 <td>{leads(o.id)}</td>
+                <td>{(() => { const [w, r] = waiting(o.id); return w ? <span className={`wait-pill ${r ? 'hot' : ''}`}><Icon name="bell" size={12} />{w}{r ? ` · ${r} ${T('جاهز', 'ready')}` : ''}</span> : <span className="dim">—</span>; })()}</td>
                 {admin && <td><Toggle checked={!!o.featured} onChange={(v) => { store.update('offers', o.id, { featured: v }); toast(v ? T('اتميّز', 'Featured') : T('اتشال من المميز', 'Unfeatured')); }} /></td>}
                 <td><Toggle checked={o.active !== false} onChange={(v) => { store.update('offers', o.id, { active: v }); toast(v ? T('العرض ظاهر', 'Offer is live') : T('العرض اتخفى', 'Offer hidden')); }} /></td>
                 <td className="nowrap">

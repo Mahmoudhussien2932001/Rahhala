@@ -117,5 +117,20 @@ export function buildSeed() {
     .concat(agencies.map((a) => ({ id: a.id, role: 'agency', agencyId: a.id, email: `${a.login}@demo.com`, pass: 'Demo@123' })));
   agencies.forEach((a) => delete a.login);
 
-  return { agencies, offers, inquiries, accounts };
+  // Demo waiting-list entries (fictional): some still waiting, one already triggered by a price drop.
+  const byId = Object.fromEntries(offers.map((o) => [o.id, o]));
+  const AL = [
+    ['al1', 'o07', 'منى عادل', '201001234567', ['price'], 'ar', 0, 2],
+    ['al2', 'o07', 'Omar Nabil', '201112345678', ['price', 'seats'], 'en', 0, 5],
+    ['al3', 'o40', 'كريم فتحي', '201223456789', ['price'], 'ar', 2500, 9],
+    ['al4', 'o25', 'Laila Hany', '201554567890', ['seats'], 'en', 0, 4],
+    ['al5', 'o01', 'إيمان سعيد', '201065678901', ['price'], 'ar', 0, 1],
+  ];
+  const alerts = AL.filter(([, oid]) => byId[oid]).map(([id, oid, name, whatsapp, kinds, lang, dropped, ago]) => {
+    const o = byId[oid];
+    const base = { id, offerId: oid, agencyId: o.agencyId, name, whatsapp, kinds, lang, priceAtSignup: o.price + dropped, seatsAtSignup: o.seats, createdAt: now - ago * day };
+    return dropped ? { ...base, status: 'ready', reason: 'price', readyPrice: o.price, readyAt: now - day } : { ...base, status: 'waiting' };
+  });
+
+  return { agencies, offers, inquiries, accounts, alerts };
 }

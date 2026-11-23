@@ -10,6 +10,7 @@ import { CATS, CITIES, DESTS } from '../../data/catalog';
 import { fmt } from '../../lib/format';
 import { InquiriesTable, Kpi, OffersTable, SideNav, StatusTabs, Toggle, countStatus, last30 } from './parts';
 import { AgencyForm, OfferForm, PasswordForm } from './forms';
+import { AlertsPanel } from '../../components/Alerts';
 
 export default function AdminDashboard() {
   const { T, L, lang } = useLang();
@@ -26,11 +27,14 @@ export default function AdminDashboard() {
 
   const A = store.list('agencies'), O = store.list('offers'), Q = store.list('inquiries');
   const st = countStatus(Q);
+  const AL = store.list('alerts');
+  const readyAlerts = AL.filter((x) => x.status === 'ready').length;
   const tabs = [
     ['overview', T('نظرة عامة', 'Overview'), 'chart'],
     ['agencies', T('الشركات', 'Agencies'), 'bld'],
     ['offers', T('كل العروض', 'All offers'), 'tag'],
     ['inquiries', T('كل الطلبات', 'All requests'), 'inbox', st.new],
+    ['alerts', T('قوائم الانتظار', 'Waiting lists'), 'bell', readyAlerts],
     ['settings', T('الإعدادات', 'Settings'), 'gear'],
   ];
   const who = <><span className="av lg plain"><Logo size={42} /></span><div><b>{T('لوحة الأدمن', 'Admin')}</b><span className="ltr xs">{store.get('accounts', 'admin')?.email}</span></div></>;
@@ -137,6 +141,13 @@ export default function AdminDashboard() {
       <>
         <div className="dhead"><div><div className="eyebrow">{Q.length} {T('طلب', 'requests')} · {st.new} {T('جديد', 'new')}</div><h2>{T('كل الطلبات', 'All requests')}</h2></div><StatusTabs value={status} onChange={setStatus} /></div>
         <div className="panel"><InquiriesTable list={l} admin /></div>
+      </>
+    );
+  } else if (tab === 'alerts') {
+    body = (
+      <>
+        <div className="dhead"><div><div className="eyebrow">{AL.length} {T('مستني', 'waiting')} · {readyAlerts} {T('جاهز للتواصل', 'ready to contact')}</div><h2>{T('قوائم الانتظار', 'Waiting lists')}</h2></div></div>
+        <div className="panel"><AlertsPanel list={AL} admin /></div>
       </>
     );
   } else {

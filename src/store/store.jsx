@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState } from 
 import { buildSeed } from '../data/seed';
 import { passHash } from '../lib/hash';
 import { storage } from '../lib/storage';
+import { checkAlert } from '../data/alerts';
+import { uid } from '../lib/format';
 
 /*
   The app's "database".
@@ -10,14 +12,27 @@ import { storage } from '../lib/storage';
   (Supabase, Firebase, Laravel API...). Components only use the API returned by useStore().
 */
 const DB_KEY = 'rahhala_react_db_v1';
-const COLS = ['agencies', 'offers', 'inquiries', 'accounts'];
+const COLS = ['agencies', 'offers', 'inquiries', 'accounts', 'alerts'];
+const REQUIRED = ['agencies', 'offers', 'inquiries', 'accounts']; // 'alerts' was added later and is created if missing
+
+/* After an offer is written, flag any waiting price/seat alerts that now apply. */
+function withAlertCheck(d, offer) {
+  if (!offer || !d.alerts) return d;
+  let changed = false;
+  const alerts = { ...d.alerts };
+  Object.values(alerts).forEach((a) => {
+    const patch = checkAlert(a, offer);
+    if (patch) { alerts[a.id] = { ...a, ...patch }; changed = true; }
+  });
+  return changed ? { ...d, alerts } : d;
+}
 
 function seedDb() {
   const seed = buildSeed();
   const db = {};
   for (const c of COLS) {
     db[c] = {};
-    seed[c].forEach((x) => { db[c][x.id] = x; });
+    (seed[c] || []).forEach((x) => { db[c][x.id] = x; });
   }
   Object.values(db.accounts).forEach((a) => {
     a.passHash = passHash(a.email, a.pass);
@@ -28,7 +43,8 @@ function seedDb() {
 
 function loadDb() {
   const saved = storage.get(DB_KEY, null);
-  if (!(saved && COLS.every((c) => saved[c]))) return seedDb();
+  if (!(saved && REQUIRED.every((c) => saved[c]))) return seedDb();
+  if (!saved.alerts) saved.alerts = Object.fromEntries((buildSeed().alerts || []).map((a) => [a.id, a]));
   // Migration: give untouched demo offers the demo room/child pricing added later.
   const seedOffers = Object.fromEntries(buildSeed().offers.map((o) => [o.id, o]));
   Object.values(saved.offers).forEach((o) => {
@@ -50,12 +66,14 @@ export function StoreProvider({ children }) {
     return p;
   });
   const [chooserOpen, setChooserOpen] = useState(false); // UI only, not persisted
+  const [favorites, setFavorites] = useState(() => storage.get('rh_favs', []));
   const persistent = useRef(true);
 
   useEffect(() => { persistent.current = storage.set(DB_KEY, db); }, [db]);
   useEffect(() => { if (session) storage.set('rh_session', session); else storage.remove('rh_session'); }, [session]);
   useEffect(() => { storage.set('rh_cmp', compare); }, [compare]);
   useEffect(() => { storage.set('rh_prefs', prefs); }, [prefs]);
+  useEffect(() => { storage.set('rh_favs', favorites); }, [favorites]);
 
   const api = useMemo(() => {
     const agency = (id) => db.agencies[id];
@@ -76,8 +94,15 @@ export function StoreProvider({ children }) {
       isAdmin: () => session?.role === 'admin',
 
       /* writes */
-      set: (col, id, doc) => setDb((d) => ({ ...d, [col]: { ...d[col], [id]: { ...doc, id } } })),
-      update: (col, id, patch) => setDb((d) => (d[col][id] ? { ...d, [col]: { ...d[col], [id]: { ...d[col][id], ...patch } } } : d)),
+      set: (col, id, doc) => setDb((d) => {
+        const next = { ...d, [col]: { ...d[col], [id]: { ...doc, id } } };
+        return col === 'offers' ? withAlertCheck(next, next.offers[id]) : next;
+      }),
+      update: (col, id, patch) => setDb((d) => {
+        if (!d[col][id]) return d;
+        const next = { ...d, [col]: { ...d[col], [id]: { ...d[col][id], ...patch } } };
+        return col === 'offers' ? withAlertCheck(next, next.offers[id]) : next;
+      }),
       remove: (col, ids) => setDb((d) => {
         const c = { ...d[col] };
         [].concat(ids).forEach((i) => delete c[i]);
@@ -90,6 +115,7 @@ export function StoreProvider({ children }) {
           accounts: strip('accounts', (a) => a.id === id),
           offers: strip('offers', (o) => o.agencyId === id),
           inquiries: strip('inquiries', (q) => q.agencyId === id),
+          alerts: strip('alerts', (x) => x.agencyId === id),
         };
       }),
       reset: () => { setDb(seedDb()); setSession(null); },
@@ -118,6 +144,23 @@ export function StoreProvider({ children }) {
       },
       clearCompare: () => setCompare([]),
 
+      /* favorites (per visitor) */
+      favorites,
+      isFav: (id) => favorites.includes(id),
+      toggleFav: (id) => setFavorites((f) => (f.includes(id) ? f.filter((x) => x !== id) : [id, ...f])),
+
+      /* price-drop / low-seats alerts */
+      addAlert({ offerId, name, whatsapp, kinds, lang }) {
+        const o = db.offers[offerId];
+        if (!o) return null;
+        const id = uid('al');
+        setDb((d) => ({ ...d, alerts: { ...d.alerts, [id]: {
+          id, offerId, agencyId: o.agencyId, name, whatsapp, kinds, lang,
+          priceAtSignup: o.price, seatsAtSignup: o.seats, status: 'waiting', createdAt: Date.now(),
+        } } }));
+        return id;
+      },
+
       /* visitor preferences */
       prefs,
       setPref: (key, value) => setPrefs((p) => {
@@ -129,7 +172,7 @@ export function StoreProvider({ children }) {
       openChooser: () => setChooserOpen(true),
       closeChooser: () => setChooserOpen(false),
     };
-  }, [db, session, compare, prefs, chooserOpen]);
+  }, [db, session, compare, prefs, chooserOpen, favorites]);
 
   return <StoreCtx.Provider value={api}>{children}</StoreCtx.Provider>;
 }

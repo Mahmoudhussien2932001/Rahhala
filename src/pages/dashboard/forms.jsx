@@ -121,7 +121,10 @@ export function OfferForm({ offer }) {
       pricing: cleanPricing(o.pricing),
       views: offer?.views || 0, createdAt: offer?.createdAt || Date.now(), updatedAt: Date.now(),
     });
-    toast(isNew ? T('العرض اتضاف', 'Offer added') : T('العرض اتعدّل', 'Offer updated'));
+    const willNotify = offer ? store.list('alerts').filter((x) => x.offerId === offer.id && x.status === 'waiting' && (x.kinds || ['price']).includes('price') && (+o.price || 0) < +x.priceAtSignup).length : 0;
+    toast(willNotify
+      ? T(`السعر نزل — ${willNotify} ${willNotify === 1 ? 'شخص كان' : 'أشخاص كانوا'} مستنيين تنبيه. كلّمهم من "قائمة الانتظار".`, `Price dropped — ${willNotify} ${willNotify === 1 ? 'person was' : 'people were'} waiting. Contact them from the Waiting list.`)
+      : isNew ? T('العرض اتضاف', 'Offer added') : T('العرض اتعدّل', 'Offer updated'));
     close();
   };
 
