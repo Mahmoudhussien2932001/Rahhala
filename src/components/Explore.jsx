@@ -13,11 +13,12 @@ import { SCOPES } from '../data/explore';
 
 /* "Within Egypt or abroad?" — the first-visit chooser and the cards on the Destinations page. */
 
-
 export function WelcomeChooser({ route }) {
   const { T, L } = useLang();
-  // Shown every time the site is opened on the home page (closing hides it until the next visit).
-  const [show, setShow] = useState(() => route === 'home');
+  const store = useStore();
+  // First visit on the home page only (until a choice is saved); the navbar can reopen it any time.
+  const [firstVisit, setFirstVisit] = useState(() => route === 'home' && !store.prefs.scope);
+  const show = firstVisit || store.chooserOpen;
 
   useEffect(() => {
     if (!show) return undefined;
@@ -29,8 +30,8 @@ export function WelcomeChooser({ route }) {
   }, [show]); // eslint-disable-line
 
   if (!show) return null;
-  const close = () => setShow(false);
-  const pick = (s) => { close(); navigate(`destinations?s=${s}`); };
+  const close = (scope = store.prefs.scope || 'skip') => { store.setPref('scope', scope); setFirstVisit(false); store.closeChooser(); };
+  const pick = (s) => { close(s); navigate(`destinations?s=${s}`); };
 
   return (
     <div className="wc" role="dialog" aria-modal="true" aria-labelledby="wc-title">
@@ -53,7 +54,7 @@ export function WelcomeChooser({ route }) {
             </button>
           ))}
         </div>
-        <button className="wc-skip" onClick={close}>{T('أتفرّج على الموقع الأول', 'Just browse the site')}</button>
+        <button className="wc-skip" onClick={() => close()}>{T('أتفرّج على الموقع الأول', 'Just browse the site')}</button>
       </div>
     </div>
   );

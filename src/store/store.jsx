@@ -37,11 +37,19 @@ export function StoreProvider({ children }) {
   const [db, setDb] = useState(loadDb);
   const [session, setSession] = useState(() => storage.get('rh_session', null));
   const [compare, setCompare] = useState(() => storage.get('rh_cmp', []));
+  // Per-visitor preferences (trip scope, visa-checker answers…). Migrates the old separate key.
+  const [prefs, setPrefs] = useState(() => {
+    const p = storage.get('rh_prefs', {});
+    if (p.traveler === undefined) { const old = storage.get('rh_traveler_v1', null); if (old) p.traveler = old; }
+    return p;
+  });
+  const [chooserOpen, setChooserOpen] = useState(false); // UI only, not persisted
   const persistent = useRef(true);
 
   useEffect(() => { persistent.current = storage.set(DB_KEY, db); }, [db]);
   useEffect(() => { if (session) storage.set('rh_session', session); else storage.remove('rh_session'); }, [session]);
   useEffect(() => { storage.set('rh_cmp', compare); }, [compare]);
+  useEffect(() => { storage.set('rh_prefs', prefs); }, [prefs]);
 
   const api = useMemo(() => {
     const agency = (id) => db.agencies[id];
@@ -103,8 +111,19 @@ export function StoreProvider({ children }) {
         return true;
       },
       clearCompare: () => setCompare([]),
+
+      /* visitor preferences */
+      prefs,
+      setPref: (key, value) => setPrefs((p) => {
+        const next = { ...p };
+        if (value === null || value === undefined) delete next[key]; else next[key] = value;
+        return next;
+      }),
+      chooserOpen,
+      openChooser: () => setChooserOpen(true),
+      closeChooser: () => setChooserOpen(false),
     };
-  }, [db, session, compare]);
+  }, [db, session, compare, prefs, chooserOpen]);
 
   return <StoreCtx.Provider value={api}>{children}</StoreCtx.Provider>;
 }

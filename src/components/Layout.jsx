@@ -36,10 +36,11 @@ export function Navbar({ route }) {
 
   const solid = scrolled || !OVER_PHOTO.includes(route);
   const a = store.currentAgency();
+  const scope = ['egypt', 'abroad'].includes(store.prefs.scope) ? store.prefs.scope : null;
   const links = [
     ['home', T('الرئيسية', 'Home')],
     ['offers', T('العروض', 'Offers')],
-    ['destinations', T('الوجهات', 'Destinations')],
+    ['destinations', T('الوجهات', 'Destinations'), scope ? `destinations?s=${scope}` : 'destinations'],
     ['agencies', T('الشركات', 'Agencies')],
     ['guides', T('أدلة السفر', 'Guides')],
     ['compare', T('المقارنة', 'Compare') + (store.compare.length ? ` (${store.compare.length})` : '')],
@@ -49,9 +50,11 @@ export function Navbar({ route }) {
       <div className="wrap bar">
         <Link to="home" aria-label="Rahhala"><Brand /></Link>
         <nav className={`links ${menu ? 'open' : ''}`}>
-          {links.map(([k, n]) => <Link key={k} to={k} className={route === k ? 'on' : ''}>{n}</Link>)}
+          {links.map(([k, n, to]) => <Link key={k} to={to || k} className={route === k ? 'on' : ''}>{n}</Link>)}
+          {!a && !store.isAdmin() && <Link to="login" className={`mob-only ${route === 'login' ? 'on' : ''}`}>{T('دخول الشركات', 'Agency login')}</Link>}
         </nav>
         <div className="actions">
+          <button className="lang-btn" onClick={store.openChooser} title={T('بتدوّر على سفر فين؟', 'Where to?')} aria-label={T('بتدوّر على سفر فين؟', 'Where to?')}><Icon name="compass" size={18} /></button>
           <button className="lang-btn" onClick={toggle} title="Language">{lang === 'ar' ? 'EN' : 'ع'}</button>
           {store.isAdmin() ? (
             <Link to="admin" className="btn btn-sun btn-sm"><Icon name="grid" /><span className="hide-sm">{T('لوحة الأدمن', 'Admin')}</span></Link>
@@ -59,8 +62,8 @@ export function Navbar({ route }) {
             <Link to="dashboard" className="btn btn-sun btn-sm"><Icon name="grid" /><span className="hide-sm">{T('لوحة شركتي', 'My dashboard')}</span></Link>
           ) : (
             <>
-              <Link to="login" className={`btn btn-sm hide-sm ${solid ? 'btn-ghost' : 'btn-glass'}`}><Icon name="lock" />{T('دخول الشركات', 'Agency login')}</Link>
-              <button className="btn btn-sun btn-sm" onClick={() => open(() => <JoinModal />, { size: 'sm' })}>{T('سجّل شركتك', 'List your agency')}</button>
+              <Link to="login" className={`btn btn-sm hide-sm nav-login ${solid ? 'btn-ghost' : 'btn-glass'}`} title={T('دخول الشركات', 'Agency login')}><Icon name="lock" /><span className="nav-txt">{T('دخول الشركات', 'Agency login')}</span></Link>
+              <button className="btn btn-sun btn-sm" onClick={() => open(() => <JoinModal />, { size: 'sm' })}><span className="cta-long">{T('سجّل شركتك', 'List your agency')}</span><span className="cta-short">{T('سجّل', 'Join')}</span></button>
             </>
           )}
           <button className="burger" onClick={() => setMenu((m) => !m)} aria-label="Menu"><Icon name="menu" size={20} /></button>

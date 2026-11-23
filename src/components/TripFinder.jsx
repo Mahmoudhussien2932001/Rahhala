@@ -4,9 +4,10 @@ import { Photo, Reveal } from './Media';
 import Select from './Select';
 import { useLang } from '../lib/i18n';
 import { navigate } from '../lib/router';
-import { storage } from '../lib/storage';
+import { useStore } from '../store/store';
+import { fdate } from '../lib/format';
 import { GUIDE_ORDER, GUIDES } from '../data/guides';
-import { EASY, HELD, NATIONALITIES, STATUS_LABEL, STATUS_RANK, visaFor, visaSteps } from '../data/visas';
+import { EASY, HELD, NATIONALITIES, STATUS_LABEL, STATUS_RANK, VISA_META, visaFor, visaSteps } from '../data/visas';
 
 /*
   Trip finder for the Guides page:
@@ -15,13 +16,31 @@ import { EASY, HELD, NATIONALITIES, STATUS_LABEL, STATUS_RANK, visaFor, visaStep
   3) explains how to get each visa, step by step.
 */
 
-const KEY = 'rh_traveler_v1';
-
+/* The traveler's answers live in the store's visitor preferences. */
 export function useTraveler() {
-  const [profile, setProfile] = useState(() => storage.get(KEY, null));
-  const save = (p) => { storage.set(KEY, p); setProfile(p); };
-  const clear = () => { storage.remove(KEY); setProfile(null); };
-  return { profile, save, clear };
+  const store = useStore();
+  return {
+    profile: store.prefs.traveler || null,
+    save: (p) => store.setPref('traveler', p),
+    clear: () => store.setPref('traveler', null),
+  };
+}
+
+/* "Last updated" + source + disclaimer, shown under every visa result. */
+export function VisaMeta({ dest }) {
+  const { T, lang } = useLang();
+  const m = VISA_META[dest];
+  return (
+    <div className="vmeta">
+      {m && (
+        <p>
+          <span><Icon name="clock" size={13} />{T('آخر تحديث:', 'Last updated:')} <b>{fdate(m.updatedAt, lang)}</b></span>
+          <span><Icon name="book" size={13} />{T('المصدر:', 'Source:')} <a href={m.source.url} target="_blank" rel="noopener noreferrer">{m.source.label}</a></span>
+        </p>
+      )}
+      <small>{T('قواعد التأشيرة بتتغير — اتأكد دايماً من السفارة قبل الحجز.', 'Visa rules change — always confirm with the embassy before booking.')}</small>
+    </div>
+  );
 }
 
 export function natName(code, L) {
@@ -114,6 +133,7 @@ function DestCard({ k, v, profile }) {
         {v.via && <p className="tf-via"><Icon name="shield" size={15} />{T('بفضل التأشيرة أو الإقامة اللي معاك', 'Thanks to the visa / permit you hold')}</p>}
         {v.note && <p className="tf-note">{L(v.note)}</p>}
         {v.verify && <p className="tf-verify"><Icon name="clock" size={14} />{T('اتأكد من القاعدة دي قبل ما تحجز', 'Confirm this rule before booking')}</p>}
+        <VisaMeta dest={k} />
         <div className="tf-dest-actions">
           <button className="btn btn-sun btn-sm" onClick={() => navigate(`guides?c=${k}`)}>{T('شوف الخطة', 'See the plan')} <Icon name="arrow" flip size={15} /></button>
           {needsSteps && (
@@ -164,7 +184,6 @@ export function TripFinder({ profile, onEdit }) {
           </>
         )}
 
-        <p className="g-disclaimer"><Icon name="shield" size={15} />{T('قواعد التأشيرة بتتغير. المعلومات دي اتراجعت نوفمبر 2026 — اتأكد من الموقع الرسمي أو السفارة قبل الحجز.', 'Visa rules change. This was reviewed in November 2026 — confirm with the official site or embassy before booking.')}</p>
       </div>
     </section>
   );
@@ -199,6 +218,7 @@ export function GuideVisaBox({ dest, profile, onSetup }) {
         </div>
       </div>
       {open && <VisaHowTo v={v} dest={dest} />}
+      <VisaMeta dest={dest} />
     </Reveal>
   );
 }

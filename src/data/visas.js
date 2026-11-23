@@ -162,6 +162,21 @@ export const OFFICIAL = {
 };
 const SCHENGEN_DESTS = ['italy', 'switzerland'];
 
+/*
+  When each destination's rules were last reviewed, and the main source used.
+  Update updatedAt (YYYY-MM-DD) and source every time you re-check a destination.
+*/
+const WIKI = (page) => `https://en.wikipedia.org/wiki/${page}`;
+export const VISA_META = {
+  georgia: { updatedAt: '2026-11-22', source: { label: 'Government of Georgia, Ordinance No 256', url: 'https://gc-pfiles.mfa.gov.ge/DocFiles//2023/12/14/LegalAct/37/9be1574b-1684-4cfd-89d0-d57c572df9fc.pdf' } },
+  armenia: { updatedAt: '2026-11-22', source: { label: 'Ministry of Foreign Affairs of Armenia', url: 'https://www.mfa.am/en/whoneedvisa' } },
+  egypt: { updatedAt: '2026-11-22', source: { label: 'Wikipedia — Visa policy of Egypt', url: WIKI('Visa_policy_of_Egypt') } },
+  italy: { updatedAt: '2026-11-22', source: { label: 'Wikipedia — Visa policy of the Schengen Area', url: WIKI('Visa_policy_of_the_Schengen_Area') } },
+  switzerland: { updatedAt: '2026-11-22', source: { label: 'Wikipedia — Visa policy of the Schengen Area', url: WIKI('Visa_policy_of_the_Schengen_Area') } },
+  morocco: { updatedAt: '2026-11-22', source: { label: 'Wikipedia — Visa policy of Morocco', url: WIKI('Visa_policy_of_Morocco') } },
+  kenya: { updatedAt: '2026-11-22', source: { label: 'Wikipedia — Visa policy of Kenya', url: WIKI('Visa_policy_of_Kenya') } },
+};
+
 const docsFor = (dest) => DOCS.map((d, i) => {
   if (i !== 4) return d;
   if (dest === 'georgia') return d;
