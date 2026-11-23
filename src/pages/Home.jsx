@@ -67,6 +67,7 @@ export default function Home() {
             <button className="btn btn-sun go"><Icon name="search" />{T('دوّر', 'Search')}</button>
           </form>
           <div className="quick hero-in" style={{ '--d': '600ms' }}>
+            <button className="quiz-cta" onClick={() => navigate('quiz')}><Icon name="sparkle" size={14} />{T('مش عارف تروح فين؟ جاوب 4 أسئلة', 'Not sure where to go? Answer 4 questions')}</button>
             <span>{T('الأكتر بحثاً:', 'Popular:')}</span>
             {['mecca', 'sharm', 'sahel', 'catherine', 'istanbul'].map((k) => <button key={k} onClick={() => navigate(`offers?dest=${k}`)}>{L(DESTS[k])}</button>)}
           </div>

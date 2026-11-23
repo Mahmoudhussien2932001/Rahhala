@@ -1239,3 +1239,78 @@ tr.al-ready td { background: #FFF8F6 }
 .cmp-table tr.cmp-sec th { background: #FBF5E6; color: #8A6A1E; font-weight: 600; width: auto }
 .warn-line { display: flex; align-items: center; gap: 6px; color: #9A6400; background: #FDF4DF; padding: 6px 10px; border-radius: 10px }
 @media (max-width: 640px) { .um-places { grid-template-columns: 1fr } }
+
+/* ---------- "Find my trip" quiz (pages/Quiz.jsx, data/quiz.js) ---------- */
+.quick .quiz-cta { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FFC56B, var(--coral)); border-color: transparent; font-weight: 600 }
+.quick .quiz-cta:hover { background: #fff; color: var(--ink) }
+.wc-quiz { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .35); color: #fff; font-weight: 500; backdrop-filter: blur(8px); transition: background .2s }
+.wc-quiz:hover { background: rgba(255, 255, 255, .26) }
+
+.quiz-page { min-height: 85vh; background: radial-gradient(circle at 85% 0%, rgba(20, 167, 157, .1), transparent 40%), radial-gradient(circle at 0% 100%, rgba(255, 122, 69, .08), transparent 45%) }
+.quiz-wrap { max-width: 920px }
+.quiz-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px }
+.quiz-progress { display: flex; align-items: center; gap: 6px }
+.quiz-progress i { width: 40px; height: 6px; border-radius: 999px; background: var(--line2); transition: background .35s }
+.quiz-progress i.done { background: var(--teal) }
+.quiz-progress i.on { background: linear-gradient(90deg, var(--teal), #7FD8CF) }
+.quiz-progress span { margin-inline-start: 8px; font-size: 13px; color: var(--ink3) }
+.quiz-q { font-family: var(--fh); font-size: clamp(26px, 4vw, 40px); line-height: 1.2; text-align: center; margin: 10px 0 24px }
+.quiz-step.fwd { animation: qzIn .45s var(--ease) both }
+.quiz-step.back { animation: qzBack .45s var(--ease) both }
+@keyframes qzIn { from { opacity: 0; transform: translateX(32px) } }
+@keyframes qzBack { from { opacity: 0; transform: translateX(-32px) } }
+[dir=rtl] .quiz-step.fwd { animation-name: qzBack }
+[dir=rtl] .quiz-step.back { animation-name: qzIn }
+
+.qz-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px }
+.qz-opts button { display: grid; justify-items: center; gap: 6px; padding: 22px 14px; border-radius: 22px; background: var(--paper); border: 2px solid var(--line); box-shadow: var(--sh1); text-align: center; transition: border-color .2s, transform .2s, box-shadow .2s, background .2s }
+.qz-opts button:hover { transform: translateY(-3px); border-color: var(--teal); box-shadow: var(--sh2) }
+.qz-opts button.on { border-color: var(--teal); background: var(--mint) }
+.qz-opts button .icon { color: var(--teal) }
+.qz-opts b { font-size: 16px }
+.qz-opts small { font-size: 12px; color: var(--ink3) }
+.qz-opts.months { grid-template-columns: repeat(6, 1fr) }
+.qz-opts.months button { padding: 16px 6px }
+.qz-opts.months button.wide { grid-column: 1 / -1; display: flex; justify-content: center }
+.qz-vibes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 12px }
+.qz-vibes button { position: relative; aspect-ratio: 3 / 4; border-radius: 22px; overflow: hidden; color: #fff; display: flex; align-items: flex-end; padding: 14px; border: 3px solid transparent; transition: transform .25s var(--ease), border-color .2s, box-shadow .25s; box-shadow: var(--sh1) }
+.qz-vibes button .photo { position: absolute; inset: 0 }
+.qz-vibes button .photo img { transition: opacity .9s, transform 1.2s var(--ease) }
+.qz-vibes button:hover { transform: translateY(-4px) }
+.qz-vibes button:hover .photo img { transform: scale(1.06) }
+.qz-vibes .ov { position: absolute; inset: 0; background: linear-gradient(transparent 40%, rgba(4, 20, 32, .85)) }
+.qz-vibes b { position: relative; font-family: var(--fh); font-size: 17px; line-height: 1.25; text-align: start }
+.qz-vibes .tick { position: absolute; top: 10px; inset-inline-end: 10px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .25); border: 2px solid #fff; color: transparent; transition: .2s }
+.qz-vibes button.on { border-color: var(--sun); box-shadow: 0 0 0 4px rgba(243, 181, 74, .25), var(--sh2) }
+.qz-vibes button.on .tick { background: var(--sun); border-color: var(--sun); color: #fff }
+.quiz-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 24px }
+.quiz-nav .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none }
+
+.qz-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: -8px 0 28px }
+.qz-chips button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; background: var(--paper); border: 1px solid var(--line2); font-size: 13.5px; transition: border-color .2s }
+.qz-chips button:hover { border-color: var(--teal) }
+.qz-chips button .icon { color: var(--ink3) }
+.qz-chips .restart { background: var(--sand) }
+.qz-results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start }
+.qz-res { display: grid; gap: 10px }
+.qz-why { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 18px; background: var(--paper); border: 1px solid var(--line) }
+.qz-pct { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--mint); color: #0B6E66; font-family: var(--fh); font-weight: 700; font-size: 15px; box-shadow: inset 0 0 0 3px rgba(20, 167, 157, .35) }
+.qz-why b { font-size: 14px }
+.qz-why ul { list-style: none; padding: 0; margin-top: 4px; display: grid; gap: 3px }
+.qz-why li { display: flex; gap: 6px; align-items: flex-start; font-size: 12.5px; color: var(--ink2); line-height: 1.5 }
+.qz-why li .icon { color: var(--teal); margin-top: 3px; flex: none }
+.qz-res:first-child .qz-why { border-color: var(--sun); background: #FFFBF2 }
+
+@media (max-width: 900px) {
+  .qz-vibes { grid-template-columns: repeat(3, 1fr) }
+  .qz-results { grid-template-columns: 1fr 1fr }
+  .qz-opts.months { grid-template-columns: repeat(4, 1fr) }
+}
+@media (max-width: 560px) {
+  .qz-vibes { grid-template-columns: 1fr 1fr }
+  .qz-vibes button { aspect-ratio: 4 / 3 }
+  .qz-results { grid-template-columns: 1fr }
+  .qz-opts { grid-template-columns: 1fr 1fr }
+  .qz-opts.months { grid-template-columns: repeat(3, 1fr) }
+  .quiz-progress i { width: 28px }
+}

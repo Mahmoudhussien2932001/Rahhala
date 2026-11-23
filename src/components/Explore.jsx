@@ -54,6 +54,7 @@ export function WelcomeChooser({ route }) {
             </button>
           ))}
         </div>
+        <button className="wc-quiz" onClick={() => { close(); navigate('quiz'); }}><Icon name="sparkle" size={16} />{T('مش متأكد؟ جاوب 4 أسئلة ونختارلك', "Not sure? Answer 4 questions and we'll pick for you")}</button>
         <button className="wc-skip" onClick={() => close()}>{T('أتفرّج على الموقع الأول', 'Just browse the site')}</button>
       </div>
     </div>

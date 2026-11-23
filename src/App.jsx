@@ -11,6 +11,7 @@ import { Agencies, Compare, Destinations, Login } from './pages/Browse';
 import Guides from './pages/Guides';
 import { AgencyPage, DestinationPage, OfferPage } from './pages/Detail';
 import Favorites from './pages/Favorites';
+import Quiz from './pages/Quiz';
 import AgencyDashboard from './pages/dashboard/AgencyDashboard';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
 
@@ -25,6 +26,7 @@ const PAGES = {
   destination: DestinationPage,
   agency: AgencyPage,
   favorites: Favorites,
+  quiz: Quiz,
   login: Login,
   dashboard: AgencyDashboard,
   admin: AdminDashboard,
