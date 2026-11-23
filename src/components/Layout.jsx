@@ -18,7 +18,7 @@ export function Brand({ light }) {
   );
 }
 
-const OVER_PHOTO = ['home', 'offers', 'destinations', 'agencies', 'compare', 'guides'];
+const OVER_PHOTO = ['home', 'offers', 'destinations', 'agencies', 'compare', 'guides', 'destination', 'agency'];
 
 export function Navbar({ route }) {
   const { T, toggle, lang } = useLang();
@@ -111,7 +111,7 @@ export function Footer() {
   );
 }
 
-export function PageHeader({ title, sub, crumb, photo }) {
+export function PageHeader({ title, sub, crumb, photo, children }) {
   const { T } = useLang();
   return (
     <header className="page-head">
@@ -121,6 +121,7 @@ export function PageHeader({ title, sub, crumb, photo }) {
         <div className="crumbs"><Link to="home">{T('الرئيسية', 'Home')}</Link> / {crumb || title}</div>
         <h1>{title}</h1>
         {sub && <p>{sub}</p>}
+        {children}
       </div>
       <svg className="ph-wave" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 40 Q 360 0 720 30 T 1440 25 V60 H0Z" /></svg>
     </header>

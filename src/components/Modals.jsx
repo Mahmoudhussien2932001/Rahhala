@@ -5,9 +5,10 @@ import { useLang } from '../lib/i18n';
 import { useStore } from '../store/store';
 import { useUI, useModalClose } from './UI';
 import { CATS, CITIES, DESTS, FEATURES } from '../data/catalog';
-import { discount, fdate, fmt, money, MONTHS, uid } from '../lib/format';
+import { discount, fdate, fmt, money, MONTHS } from '../lib/format';
 import { navigate } from '../lib/router';
 import { Avatar, CompareButton, OfferCard, Verified, stars } from './Cards';
+import { BookingForm } from './Booking';
 
 export function OfferModal({ id }) {
   const { T, L, lang } = useLang();
@@ -16,8 +17,6 @@ export function OfferModal({ id }) {
   const closeSelf = useModalClose();
   const o = store.get('offers', id);
   const counted = useRef(false);
-  const [people, setPeople] = useState(1);
-  const [sent, setSent] = useState(null);
   const [photoIdx, setPhotoIdx] = useState(0);
 
   useEffect(() => {
@@ -28,15 +27,7 @@ export function OfferModal({ id }) {
   const a = store.agency(o.agencyId) || {};
   const gallery = [o.img, ...(DESTS[o.dest]?.photos || []).map((p) => `px:${p}`).filter((p) => p !== o.img)].slice(0, 4);
   const more = store.liveOffers().filter((x) => x.agencyId === o.agencyId && x.id !== id).slice(0, 3);
-  const wa = `https://wa.me/${String(a.whatsapp || '').replace(/\D/g, '')}?text=${encodeURIComponent(T('استفسار عن عرض: ', 'Question about: ') + L(o.title))}`;
-
-  const submit = (e) => {
-    e.preventDefault();
-    const f = new FormData(e.currentTarget);
-    const name = String(f.get('name')).trim().slice(0, 60), phone = String(f.get('phone')).trim().slice(0, 15);
-    store.set('inquiries', uid('q'), { offerId: o.id, agencyId: o.agencyId, name, phone, people: Math.max(1, +people || 1), note: String(f.get('note') || '').trim().slice(0, 300), status: 'new', createdAt: Date.now() });
-    setSent(phone);
-  };
+  const goPage = (to) => { closeAll(); navigate(to); };
 
   return (
     <>
@@ -58,6 +49,7 @@ export function OfferModal({ id }) {
               {o.seats <= 6 && <span className="badge warm"><Icon name="fire" size={14} />{T(`باقي ${o.seats} أماكن`, `${o.seats} spots left`)}</span>}
             </div>
             <h2 className="od-title">{L(o.title)}</h2>
+            <button className="fullpage-link" onClick={() => goPage(`offer/${o.id}`)}><Icon name="out" size={15} />{T('افتح صفحة العرض كاملة', 'Open the full offer page')}</button>
             <div className="meta lg">
               <span><Icon name="pin" size={16} />{L(DESTS[o.dest])}</span>
               <span><Icon name="moon" size={16} />{o.nights} {T('ليالي', 'nights')}</span>
@@ -73,7 +65,7 @@ export function OfferModal({ id }) {
               <div className="box sm"><span className="dim small">{T('سعر الليلة', 'Per night')}</span><b className="big">{money(Math.round(o.price / o.nights), lang)}</b></div>
               <div className="box sm"><span className="dim small">{T('شافوا العرض', 'Viewed')}</span><b className="big">{fmt(o.views)} {T('مرة', 'times')}</b></div>
             </div>
-            <div className="box agency-row mt12" onClick={() => { closeAll(); setTimeout(() => open(() => <AgencyModal id={a.id} />, { size: 'lg' }), 280); }}>
+            <div className="box agency-row mt12" onClick={() => goPage(`agency/${a.id}`)}>
               <Avatar agency={a} size="lg" />
               <div style={{ flex: 1 }}>
                 <b>{L(a.name)} {a.verified && <Verified />}</b>
@@ -100,28 +92,7 @@ export function OfferModal({ id }) {
               <div className="price"><small>{T('السعر للفرد', 'Price per person')}</small><div><b className="xl">{fmt(o.price)}</b> <small>{T('ج.م', 'EGP')}</small>{o.oldPrice ? <s>{fmt(o.oldPrice)}</s> : null}</div></div>
               <div className="mt12"><CompareButton id={o.id} variant="button" /></div>
             </div>
-            {sent ? (
-              <div className="box sent mt12">
-                <div className="ok-circle"><Icon name="check" size={26} /></div>
-                <h3>{T('طلبك وصل للشركة', 'Request sent')}</h3>
-                <p className="muted small">{L(a.name)} {T('هتكلمك قريب على', 'will call you soon on')} <span className="ltr">{sent}</span></p>
-              </div>
-            ) : (
-              <form className="box form mt12" onSubmit={submit}>
-                <h3>{T('اطلب الحجز من الشركة', 'Request booking')}</h3>
-                <p className="dim small" style={{ marginTop: -6 }}>{T('الشركة هتكلمك وتأكد الحجز معاك', 'The agency will call you to confirm')}</p>
-                <label>{T('الاسم', 'Name')}<input className="inp" name="name" required maxLength={60} /></label>
-                <div className="row2">
-                  <label>{T('الموبايل', 'Mobile')}<input className="inp ltr" name="phone" required inputMode="tel" pattern="[0-9+ ]{8,15}" /></label>
-                  <label>{T('عدد الأفراد', 'Travelers')}<input className="inp" type="number" min="1" max="50" value={people} onChange={(e) => setPeople(e.target.value)} /></label>
-                </div>
-                <label>{T('ملاحظة (اختياري)', 'Note (optional)')}<textarea className="inp" name="note" rows="2" maxLength={300} /></label>
-                <div className="dim small">{T('الإجمالي التقريبي:', 'Estimated total:')} <b className="accent">{money(o.price * Math.max(1, +people || 1), lang)}</b></div>
-                <button className="btn btn-sun">{T('ابعت الطلب', 'Send request')}</button>
-                <a className="btn btn-ghost wa" href={wa} target="_blank" rel="noopener noreferrer"><Icon name="wa" />{T('كلّم الشركة واتساب', 'WhatsApp the agency')}</a>
-                <div className="dim ltr small center">{a.phone}</div>
-              </form>
-            )}
+            <BookingForm offer={o} className="mt12" />
           </div>
         </div>
       </div>
@@ -132,6 +103,7 @@ export function OfferModal({ id }) {
 export function AgencyModal({ id }) {
   const { T, L } = useLang();
   const store = useStore();
+  const { closeAll } = useUI();
   const closeSelf = useModalClose();
   const a = store.agency(id);
   if (!a) return null;
@@ -144,6 +116,7 @@ export function AgencyModal({ id }) {
       </div>
       <div className="mbody">
         <p className="muted">{L(a.desc)}</p>
+        <button className="fullpage-link" onClick={() => { closeAll(); navigate(`agency/${a.id}`); }}><Icon name="out" size={15} />{T('افتح صفحة الشركة', 'Open the agency page')}</button>
         <div className="kv mt12 mb18">
           <span><Icon name="pin" size={15} />{L(CITIES[a.city])}</span>
           <span className="ltr"><Icon name="phone" size={15} />{a.phone}</span>
@@ -176,7 +149,10 @@ export function DestModal({ id }) {
         </div>
         <h3 className="mb12">{T('العروض المتاحة', 'Available offers')} ({list.length})</h3>
         {list.length ? <div className="grid-offers">{list.map((o, i) => <OfferCard key={o.id} offer={o} i={i} />)}</div> : <div className="empty">{T('مفيش عروض للوجهة دي دلوقتي', 'No offers for this destination right now')}</div>}
-        <div className="row-end mt18"><button className="btn btn-primary" onClick={() => { closeSelf(); navigate(`offers?dest=${id}`); }}>{T('شوف في صفحة العروض', 'Open in offers')} <Icon name="arrow" flip /></button></div>
+        <div className="row-end mt18">
+          <button className="btn btn-ghost" onClick={() => { closeSelf(); navigate(`destination/${id}`); }}><Icon name="out" size={16} />{T('صفحة الوجهة', 'Destination page')}</button>
+          <button className="btn btn-primary" onClick={() => { closeSelf(); navigate(`offers?dest=${id}`); }}>{T('شوف في صفحة العروض', 'Open in offers')} <Icon name="arrow" flip /></button>
+        </div>
       </div>
     </>
   );

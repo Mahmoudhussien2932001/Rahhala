@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { storage } from './storage';
+import { setDefaultMeta } from './seo';
 
 /*
   Language system
@@ -17,7 +18,9 @@ export function LangProvider({ children }) {
     storage.set('rh_lang_v2', lang);
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.title = lang === 'ar' ? 'رحّالة | قارن عروض شركات السياحة' : 'Rahhala | Compare travel agency offers';
+    setDefaultMeta(lang === 'ar'
+      ? { title: 'رحّالة | قارن عروض شركات السياحة', description: 'رحّالة — قارن عروض شركات السياحة المرخّصة: عمرة، مصايف، شاليهات، سفاري، وسفر للخارج.' }
+      : { title: 'Rahhala | Compare travel agency offers', description: 'Rahhala — compare offers from licensed travel agencies: Umrah, beach holidays, chalets, safaris and trips abroad.' });
   }, [lang]);
 
   const value = useMemo(() => ({

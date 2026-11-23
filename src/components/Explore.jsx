@@ -85,7 +85,7 @@ export function ExploreCard({ dest, guide, i = 0 }) {
           {g && <span className="tag guide"><Icon name="book" size={12} /> {T('دليل سفر', 'Guide')}</span>}
         </div>
         <div className="xc-tx">
-          <h3>{name}</h3>
+          <h3><a href={`#/${d ? `destination/${dest}` : `guides?c=${guide}`}`} onClick={(e) => e.stopPropagation()}>{name}</a></h3>
           <span>{sub}</span>
         </div>
       </div>

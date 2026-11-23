@@ -49,7 +49,7 @@ export function OfferCard({ offer: o, i = 0, list = false }) {
         <CompareButton id={o.id} />
       </div>
       <div className="body">
-        <h4>{L(o.title)}</h4>
+        <h4><a href={`#/offer/${o.id}`} onClick={(e) => e.stopPropagation()}>{L(o.title)}</a></h4>
         <div className="meta">
           <span><Icon name="pin" size={15} />{L(DESTS[o.dest])}</span>
           <span><Icon name="moon" size={15} />{o.nights} {T('ليالي', 'nights')}</span>
@@ -84,7 +84,7 @@ export function AgencyCard({ agency: a, i = 0 }) {
     <Reveal className="agcard" delay={(i % 4) * 70} style={{ '--c': a.color }} onClick={() => open(() => <AgencyModal id={a.id} />, { size: 'lg' })}>
       <div className="top">
         <Avatar agency={a} size="lg" />
-        <div><h3>{L(a.name)} {a.verified && <Verified />}</h3><span className="dim small">{L(a.tagline)}</span></div>
+        <div><h3><a href={`#/agency/${a.id}`} onClick={(e) => e.stopPropagation()}>{L(a.name)}</a> {a.verified && <Verified />}</h3><span className="dim small">{L(a.tagline)}</span></div>
       </div>
       <div className="kv">
         <span><span className="stars">{stars(a.rating)}</span> {a.rating} ({fmt(a.reviews)})</span>
@@ -109,7 +109,7 @@ export function DestCard({ id, big = false, i = 0 }) {
       <div className="ov" />
       {inSeason && <span className="tag">☀ {T('موسمها دلوقتي', 'In season now')}</span>}
       <div className="tx">
-        <div><h3>{L(d)}</h3><span className="sub">{L(d.country)} · {list.length} {T('عرض', 'offers')}</span></div>
+        <div><h3><a href={`#/destination/${id}`} onClick={(e) => e.stopPropagation()}>{L(d)}</a></h3><span className="sub">{L(d.country)} · {list.length} {T('عرض', 'offers')}</span></div>
         {list.length > 0 && <div className="from">{T('تبدأ من', 'from')}<b>{fmt(min)}</b></div>}
       </div>
     </Reveal>
