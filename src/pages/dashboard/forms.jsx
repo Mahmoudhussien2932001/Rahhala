@@ -9,6 +9,8 @@ import { uid } from '../../lib/format';
 import { passHash } from '../../lib/hash';
 import { ROOM_TYPES } from '../../data/pricing';
 import { FLIGHT_TYPES } from '../../data/umrah';
+import { isExpired } from '../../lib/offers';
+import { liveCountOf, planOf } from '../../data/plans';
 
 function compressImage(file) {
   return new Promise((resolve, reject) => {
@@ -88,6 +90,9 @@ function PricingEditor({ pricing, base, onChange }) {
   );
 }
 
+/* datetime-local wants local time without seconds/zone */
+const toLocalInput = (iso) => { const d = new Date(iso); const p = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
+
 /* ---------- optional Umrah details (see data/umrah.js) ---------- */
 
 function cleanUmrah(u) {
@@ -164,18 +169,33 @@ export function OfferForm({ offer }) {
     e.preventDefault();
     if (mine && offer && offer.agencyId !== mine.id) return toast(T('العرض ده مش بتاعك', 'Not your offer'), 'err');
     const id = offer?.id || uid('o');
+    const agencyId = admin ? o.agencyId : mine.id;
+    // Plan limit: an agency can't publish more live offers than its plan allows (saved hidden instead).
+    // Only checked when publishing a new or hidden offer — editing an offer that is already live never hides it.
+    let active = o.active !== false;
+    let limited = false;
+    const plan = planOf(store.agency(agencyId));
+    const goingLive = active && (isNew || offer.active === false || isExpired(offer));
+    if (goingLive && !admin && !isExpired({ date: o.date }) && liveCountOf(store.list('offers').filter((x) => x.id !== id), agencyId, isExpired) >= plan.maxLive) {
+      active = false;
+      limited = true;
+      toast(T(`اتحفظ مخفي — باقتك (${plan.name.ar}) بتسمح بـ ${plan.maxLive} عروض ظاهرة بس.`, `Saved as hidden — your ${plan.name.en} plan allows ${plan.maxLive} live offers.`), 'err');
+    }
+    const hasDiscount = +o.oldPrice > +o.price;
     store.set('offers', id, {
       ...offer, ...o,
-      agencyId: admin ? o.agencyId : mine.id,
+      agencyId,
       category: DESTS[o.dest]?.cat || o.category,
       title: { ar: o.title.ar.trim(), en: (o.title.en || '').trim() || o.title.ar.trim() },
       price: +o.price || 0, oldPrice: +o.oldPrice || null, nights: Math.max(1, +o.nights || 1), seats: Math.max(0, +o.seats || 0),
       pricing: cleanPricing(o.pricing),
       umrah: DESTS[o.dest]?.cat === 'umrah' ? cleanUmrah(o.umrah) : null,
+      active,
+      flashEndsAt: hasDiscount && o.flashEndsAt && +new Date(o.flashEndsAt) > Date.now() ? new Date(o.flashEndsAt).toISOString() : null,
       views: offer?.views || 0, createdAt: offer?.createdAt || Date.now(), updatedAt: Date.now(),
     });
     const willNotify = offer ? store.list('alerts').filter((x) => x.offerId === offer.id && x.status === 'waiting' && (x.kinds || ['price']).includes('price') && (+o.price || 0) < +x.priceAtSignup).length : 0;
-    toast(willNotify
+    if (!limited) toast(willNotify
       ? T(`السعر نزل — ${willNotify} ${willNotify === 1 ? 'شخص كان' : 'أشخاص كانوا'} مستنيين تنبيه. كلّمهم من "قائمة الانتظار".`, `Price dropped — ${willNotify} ${willNotify === 1 ? 'person was' : 'people were'} waiting. Contact them from the Waiting list.`)
       : isNew ? T('العرض اتضاف', 'Offer added') : T('العرض اتعدّل', 'Offer updated'));
     close();
@@ -202,6 +222,12 @@ export function OfferForm({ offer }) {
           <label>{T('السعر للفرد (ج.م)', 'Price per person (EGP)')}<input className="inp" type="number" min="0" required value={o.price} onChange={(e) => set('price', e.target.value)} /></label>
           <label>{T('السعر قبل الخصم (اختياري)', 'Price before discount (optional)')}<input className="inp" type="number" min="0" value={o.oldPrice || ''} onChange={(e) => set('oldPrice', e.target.value)} /></label>
         </div>
+        {+o.oldPrice > +o.price && (
+          <label className="flash-field">{T('عرض لفترة محدودة؟ الخصم ينتهي في (اختياري)', 'Flash deal? Discount ends at (optional)')}
+            <input className="inp ltr" type="datetime-local" value={o.flashEndsAt ? toLocalInput(o.flashEndsAt) : ''} min={toLocalInput(new Date().toISOString())} onChange={(e) => set('flashEndsAt', e.target.value ? new Date(e.target.value).toISOString() : null)} />
+            <small className="dim">{T('هيظهر عدّاد تنازلي على العرض لحد الميعاد ده.', 'A countdown shows on the offer until this time.')}</small>
+          </label>
+        )}
         <div className="row3">
           <label>{T('عدد الليالي', 'Nights')}<input className="inp" type="number" min="1" required value={o.nights} onChange={(e) => set('nights', e.target.value)} /></label>
           <label>{T('الأماكن المتاحة', 'Seats')}<input className="inp" type="number" min="0" required value={o.seats} onChange={(e) => set('seats', e.target.value)} /></label>

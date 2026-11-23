@@ -9,6 +9,8 @@ import { CATS, DESTS, STATUS } from '../../data/catalog';
 import { ago, fdate, fmt, shortDate } from '../../lib/format';
 import { OfferForm } from './forms';
 import { breakdownSummary } from '../../data/pricing';
+import { isExpired } from '../../lib/offers';
+import { liveCountOf, planOf } from '../../data/plans';
 
 export function Kpi({ label, value, sub, icon, color }) {
   return (
@@ -70,6 +72,35 @@ export function OffersTable({ list, admin }) {
   if (!list.length) return <div className="empty"><Icon name="tag" size={30} />{T('مفيش عروض. اضغط "عرض جديد" وضيف أول عرض.', 'No offers yet. Click "New offer" to add one.')}</div>;
   const leads = (id) => store.list('inquiries').filter((q) => q.offerId === id).length;
   const waiting = (id) => { const l = store.list('alerts').filter((x) => x.offerId === id && x.status !== 'contacted'); return [l.length, l.filter((x) => x.status === 'ready').length]; };
+  const offersAll = store.list('offers');
+  // Plan limits: agencies can't go over their live-offer limit; the admin may override (with a warning).
+  const setLive = (o, v) => {
+    if (v && !isExpired(o)) {
+      const ag = store.agency(o.agencyId);
+      const plan = planOf(ag);
+      const used = liveCountOf(offersAll.filter((x) => x.id !== o.id), o.agencyId, isExpired);
+      if (used >= plan.maxLive) {
+        if (!admin) return toast(T(`باقتك (${plan.name.ar}) بتسمح بـ ${plan.maxLive} عروض ظاهرة بس — اخفي عرض تاني أو رقّي الباقة.`, `Your ${plan.name.en} plan allows ${plan.maxLive} live offers — hide another offer or upgrade.`), 'err');
+        toast(T('تنبيه: الشركة دي عدّت حد باقتها.', 'Note: this agency is now over its plan limit.'));
+      }
+    }
+    store.update('offers', o.id, { active: v });
+    toast(v ? T('العرض ظاهر', 'Offer is live') : T('العرض اتخفى', 'Offer hidden'));
+  };
+  const setFeatured = (o, v) => {
+    if (v) {
+      const plan = planOf(store.agency(o.agencyId));
+      const n = offersAll.filter((x) => x.agencyId === o.agencyId && x.featured && x.id !== o.id).length;
+      if (n >= plan.featuredSlots) toast(T(`تنبيه: باقة الشركة فيها ${plan.featuredSlots} عرض مميز بس.`, `Note: this agency's plan includes ${plan.featuredSlots} featured offer(s).`));
+    }
+    store.update('offers', o.id, { featured: v });
+    toast(v ? T('اتميّز', 'Featured') : T('اتشال من المميز', 'Unfeatured'));
+  };
+  const dup = (o) => {
+    if (mine && o.agencyId !== mine.id) return;
+    store.duplicateOffer(o.id);
+    toast(T('اتعملت نسخة مخفية — عدّلها وأظهرها', 'Hidden copy created — edit it, then make it live'));
+  };
   const del = async (o) => {
     if (mine && o.agencyId !== mine.id) return;
     if (await confirm(T(`هتمسح "${L(o.title)}" نهائي.`, `Delete "${L(o.title)}" permanently?`), T('امسح', 'Delete'))) { store.remove('offers', o.id); toast(T('العرض اتمسح', 'Offer deleted')); }
@@ -85,7 +116,7 @@ export function OffersTable({ list, admin }) {
             const a = store.agency(o.agencyId) || {};
             return (
               <tr key={o.id}>
-                <td><div className="cell"><div className="thumb"><Photo src={o.img} w={200} /></div><div><b className="fw5">{L(o.title)}</b><div className="dim xs">{L(CATS[o.category])} · {L(DESTS[o.dest])} · {o.nights} {T('ليالي', 'n')}</div></div></div></td>
+                <td><div className="cell"><div className="thumb"><Photo src={o.img} w={200} /></div><div><b className="fw5">{L(o.title)}</b>{isExpired(o) && <span className="exp-pill">{T('انتهى ميعاده', 'Expired')}</span>}<div className="dim xs">{L(CATS[o.category])} · {L(DESTS[o.dest])} · {o.nights} {T('ليالي', 'n')}</div></div></div></td>
                 {admin && <td><span className="chip-ag"><Avatar agency={a} /><span className="nm">{L(a.name) || '—'}</span></span></td>}
                 <td><b className="accent">{fmt(o.price)}</b>{o.oldPrice ? <div className="dim xs strike">{fmt(o.oldPrice)}</div> : null}</td>
                 <td className={o.seats <= 5 ? 'warm fw6' : ''}>{o.seats}</td>
@@ -93,10 +124,11 @@ export function OffersTable({ list, admin }) {
                 <td>{fmt(o.views || 0)}</td>
                 <td>{leads(o.id)}</td>
                 <td>{(() => { const [w, r] = waiting(o.id); return w ? <span className={`wait-pill ${r ? 'hot' : ''}`}><Icon name="bell" size={12} />{w}{r ? ` · ${r} ${T('جاهز', 'ready')}` : ''}</span> : <span className="dim">—</span>; })()}</td>
-                {admin && <td><Toggle checked={!!o.featured} onChange={(v) => { store.update('offers', o.id, { featured: v }); toast(v ? T('اتميّز', 'Featured') : T('اتشال من المميز', 'Unfeatured')); }} /></td>}
-                <td><Toggle checked={o.active !== false} onChange={(v) => { store.update('offers', o.id, { active: v }); toast(v ? T('العرض ظاهر', 'Offer is live') : T('العرض اتخفى', 'Offer hidden')); }} /></td>
+                {admin && <td><Toggle checked={!!o.featured} onChange={(v) => setFeatured(o, v)} /></td>}
+                <td><Toggle checked={o.active !== false} onChange={(v) => setLive(o, v)} /></td>
                 <td className="nowrap">
                   <button className="btn btn-ghost btn-xs" title={T('تعديل', 'Edit')} onClick={() => open(() => <OfferForm offer={o} />, { size: 'lg' })}><Icon name="edit" size={16} /></button>{' '}
+                  <button className="btn btn-ghost btn-xs" title={T('اعمل نسخة', 'Duplicate')} onClick={() => dup(o)}><Icon name="copy" size={16} /></button>{' '}
                   <button className="btn btn-danger btn-xs" title={T('مسح', 'Delete')} onClick={() => del(o)}><Icon name="trash" size={16} /></button>
                 </td>
               </tr>
@@ -132,7 +164,7 @@ export function InquiriesTable({ list, admin }) {
                 <td className="nowrap">{q.breakdown ? <>{fmt(q.breakdown.total)}<div className="dim xs">{T('حسبة العميل', 'Customer quote')}</div></> : o ? fmt(o.price * q.people) : '—'}</td>
                 <td className="dim nowrap">{ago(q.createdAt, lang)}</td>
                 <td>
-                  <select className={`sel status st-${q.status}`} value={q.status} onChange={(e) => { store.update('inquiries', q.id, { status: e.target.value }); toast(T('الحالة اتغيّرت', 'Status updated')); }}>
+                  <select className={`sel status st-${q.status}`} value={q.status} onChange={(e) => { const v = e.target.value; store.update('inquiries', q.id, { status: v, ...(v !== 'new' && !q.contactedAt ? { contactedAt: Date.now() } : {}) }); toast(T('الحالة اتغيّرت', 'Status updated')); }}>
                     {Object.entries(STATUS).map(([k, v]) => <option key={k} value={k}>{L(v)}</option>)}
                   </select>
                 </td>

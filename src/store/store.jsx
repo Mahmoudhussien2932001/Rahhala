@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { buildSeed } from '../data/seed';
+import { buildSeed, DEMO_PLANS, demoReplyHours } from '../data/seed';
+import { isExpired } from '../lib/offers';
 import { passHash } from '../lib/hash';
 import { storage } from '../lib/storage';
 import { checkAlert } from '../data/alerts';
@@ -50,6 +51,12 @@ function loadDb() {
   Object.values(saved.offers).forEach((o) => {
     if (o.pricing === undefined && !o.updatedAt && seedOffers[o.id]) o.pricing = seedOffers[o.id].pricing;
     if (o.umrah === undefined && !o.updatedAt && seedOffers[o.id]?.umrah) o.umrah = seedOffers[o.id].umrah;
+    if (o.flashEndsAt === undefined && !o.updatedAt && seedOffers[o.id]?.flashEndsAt) o.flashEndsAt = seedOffers[o.id].flashEndsAt;
+  });
+  // Migration: plans and reply times were added later.
+  Object.values(saved.agencies).forEach((a) => { if (!a.plan) a.plan = DEMO_PLANS[a.id] || 'free'; });
+  Object.values(saved.inquiries).forEach((q) => {
+    if (q.status !== 'new' && !q.contactedAt) q.contactedAt = Math.min(Date.now(), q.createdAt + demoReplyHours(q.id, q.agencyId) * 36e5);
   });
   return saved;
 }
@@ -90,7 +97,8 @@ export function StoreProvider({ children }) {
       get: (col, id) => db[col][id],
       agency,
       liveAgencies: () => Object.values(db.agencies).filter(isLive),
-      liveOffers: () => Object.values(db.offers).filter((o) => o.active !== false && isLive(agency(o.agencyId))),
+      // Live = visible, agency active, and departure date not passed (expired offers hide automatically).
+      liveOffers: () => Object.values(db.offers).filter((o) => o.active !== false && !isExpired(o) && isLive(agency(o.agencyId))),
       currentAgency: () => (session?.role === 'agency' ? agency(session.agencyId) : null),
       isAdmin: () => session?.role === 'admin',
 
@@ -109,6 +117,16 @@ export function StoreProvider({ children }) {
         [].concat(ids).forEach((i) => delete c[i]);
         return { ...d, [col]: c };
       }),
+      /* add many docs in one write (CSV import) */
+      setMany: (col, docs) => setDb((d) => ({ ...d, [col]: { ...d[col], ...Object.fromEntries(docs.map((x) => [x.id, x])) } })),
+      duplicateOffer(id) {
+        const o = db.offers[id];
+        if (!o) return null;
+        const nid = uid('o');
+        const copy = { ...o, id: nid, title: { ar: `${o.title.ar} (نسخة)`, en: `${o.title.en || o.title.ar} (copy)` }, active: false, featured: false, views: 0, flashEndsAt: null, createdAt: Date.now(), updatedAt: Date.now() };
+        setDb((d) => ({ ...d, offers: { ...d.offers, [nid]: copy } }));
+        return nid;
+      },
       removeAgency: (id) => setDb((d) => {
         const strip = (col, pred) => Object.fromEntries(Object.entries(d[col]).filter(([, v]) => !pred(v)));
         return {

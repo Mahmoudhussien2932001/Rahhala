@@ -10,6 +10,8 @@ import { CITIES } from '../../data/catalog';
 import { InquiriesTable, Kpi, OffersTable, SideNav, StatusTabs, countStatus, last30 } from './parts';
 import { OfferForm, PasswordForm } from './forms';
 import { AlertsPanel } from '../../components/Alerts';
+import { AgencyAnalytics, PlanCard } from './Analytics';
+import { CsvImport } from './CsvImport';
 
 export default function AgencyDashboard() {
   const { T, L, lang } = useLang();
@@ -34,6 +36,7 @@ export default function AgencyDashboard() {
     ['offers', T('عروضي', 'My offers'), 'tag'],
     ['inquiries', T('طلبات العملاء', 'Requests'), 'inbox', st.new],
     ['alerts', T('قائمة الانتظار', 'Waiting list'), 'bell', readyAlerts],
+    ['analytics', T('الإحصائيات', 'Analytics'), 'chart'],
     ['profile', T('بيانات الشركة', 'Company profile'), 'gear'],
   ];
   const who = <><Avatar agency={a} size="lg" /><div><b>{L(a.name)}</b><span>{a.verified ? T('شركة موثّقة ✓', 'Verified agency ✓') : T('في انتظار التوثيق', 'Pending verification')}</span></div></>;
@@ -48,6 +51,7 @@ export default function AgencyDashboard() {
     body = (
       <>
         <div className="dhead"><div><div className="eyebrow">{T('أهلاً', 'Welcome')} {L(a.name)}</div><h2>{T('نظرة عامة', 'Overview')}</h2></div><button className="btn btn-sun" onClick={newOffer}><Icon name="plus" />{T('عرض جديد', 'New offer')}</button></div>
+        <PlanCard agency={a} />
         <div className="kpis">
           <Kpi label={T('العروض الظاهرة', 'Live offers')} value={live.length} sub={T(`من ${offers.length} عرض`, `of ${offers.length}`)} icon="tag" color="#14A79D" />
           <Kpi label={T('مشاهدات العروض', 'Offer views')} value={views} sub={T('إجمالي', 'Total')} icon="eye" color="#3A69AD" />
@@ -66,7 +70,9 @@ export default function AgencyDashboard() {
   } else if (tab === 'offers') {
     body = (
       <>
-        <div className="dhead"><div><div className="eyebrow">{offers.length} {T('عرض', 'offers')}</div><h2>{T('عروضي', 'My offers')}</h2></div><button className="btn btn-sun" onClick={newOffer}><Icon name="plus" />{T('عرض جديد', 'New offer')}</button></div>
+        <div className="dhead"><div><div className="eyebrow">{offers.length} {T('عرض', 'offers')}</div><h2>{T('عروضي', 'My offers')}</h2></div>
+          <div className="row-start"><button className="btn btn-ghost" onClick={() => open(() => <CsvImport agencyId={a.id} />, { size: 'lg' })}><Icon name="up" />{T('استيراد CSV', 'Import CSV')}</button><button className="btn btn-sun" onClick={newOffer}><Icon name="plus" />{T('عرض جديد', 'New offer')}</button></div></div>
+        <PlanCard agency={a} />
         <div className="panel"><OffersTable list={[...offers].sort((x, y) => (y.createdAt || 0) - (x.createdAt || 0))} /></div>
       </>
     );
@@ -76,6 +82,13 @@ export default function AgencyDashboard() {
       <>
         <div className="dhead"><div><div className="eyebrow">{inqs.length} {T('طلب', 'requests')} · {st.new} {T('جديد', 'new')}</div><h2>{T('طلبات العملاء', 'Customer requests')}</h2></div><StatusTabs value={status} onChange={setStatus} /></div>
         <div className="panel"><InquiriesTable list={l} /></div>
+      </>
+    );
+  } else if (tab === 'analytics') {
+    body = (
+      <>
+        <div className="dhead"><div><div className="eyebrow">{L(a.name)}</div><h2>{T('الإحصائيات', 'Analytics')}</h2></div></div>
+        <AgencyAnalytics agency={a} />
       </>
     );
   } else if (tab === 'alerts') {

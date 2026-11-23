@@ -183,7 +183,7 @@ export function JoinModal() {
       <div className="mbody">
         <p className="muted">{T('في النسخة دي، الأدمن هو اللي بيضيف الشركات ويعملّها حساب دخول من لوحة الأدمن.', 'In this version the admin adds agencies and creates their login from the admin dashboard.')}</p>
         <div className="demo">{T('جرّب لوحة الشركة بحساب تجريبي:', 'Try the agency dashboard with a demo account:')} <code>madar@demo.com</code> / <code>Demo@123</code></div>
-        <div className="row-end mt18"><button className="btn btn-primary" onClick={() => { closeSelf(); navigate('login'); }}>{T('دخول الشركات', 'Agency login')}</button></div>
+        <div className="row-end mt18"><button className="btn btn-ghost" onClick={() => { closeSelf(); navigate('pricing'); }}>{T('شوف الباقات', 'See plans')}</button><button className="btn btn-primary" onClick={() => { closeSelf(); navigate('login'); }}>{T('دخول الشركات', 'Agency login')}</button></div>
       </div>
     </>
   );

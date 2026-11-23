@@ -62,6 +62,19 @@ const OFFERS = [
 
 const NAMES = ['أحمد سمير', 'منى عادل', 'كريم فتحي', 'سارة محمود', 'محمد طارق', 'نهى إبراهيم', 'يوسف علي', 'هبة سامي', 'عمر خالد', 'رنا مصطفى', 'مصطفى حسن', 'ياسمين أشرف', 'Omar Nabil', 'Laila Hany', 'خالد عبدالله', 'إيمان سعيد', 'شريف رأفت', 'دينا وليد', 'Ahmed Fawzy', 'نورهان جمال'];
 
+/* Demo plans per agency (others are on Free). */
+export const DEMO_PLANS = { a1: 'premium', a2: 'pro', a4: 'pro', a5: 'pro', a9: 'pro' };
+
+/* Deterministic demo reply time in hours for an answered request (fast agencies answer quicker). */
+const FAST = ['a1', 'a2', 'a5', 'a9'];
+export function demoReplyHours(id, agencyId) {
+  const h = [...String(id)].reduce((s, c) => (s * 31 + c.charCodeAt(0)) % 9973, 7);
+  return FAST.includes(agencyId) ? 1 + (h % 6) : 6 + (h % 34);
+}
+
+/* Demo flash deals: hours from now until the discount ends. */
+const DEMO_FLASH = { o07: 55, o14: 19 };
+
 /* Demo Umrah details (fictional hotels and distances, like all demo data). */
 const U = (hotelMakkah, hotelMadinah, distanceHaram, distanceNabawi, nightsMakkah, nightsMadinah, flight, airline) =>
   ({ hotelMakkah, hotelMadinah, distanceHaram, distanceNabawi, nightsMakkah, nightsMadinah, flight, airline });
@@ -97,7 +110,7 @@ export function buildSeed() {
 
   const agencies = AGENCIES.map(([id, name, tagline, color, city, rating, reviews, verified, since, license, desc, login]) => {
     const n = String(10000000 + Number(id.slice(1)) * 1234567).slice(0, 8);
-    return { id, name, tagline, color, city, rating, reviews, verified, since, license, desc, active: true, phone: '010' + n, whatsapp: '2010' + n, email: `info@${login}-demo.com`, createdAt: now - (2026 - since) * 9 * day, login };
+    return { id, name, tagline, color, city, rating, reviews, verified, since, license, desc, active: true, plan: DEMO_PLANS[id] || 'free', phone: '010' + n, whatsapp: '2010' + n, email: `info@${login}-demo.com`, createdAt: now - (2026 - since) * 9 * day, login };
   });
 
   const offers = OFFERS.map(([id, agencyId, dest, from, ar, en, price, oldPrice, nights, d, seats, features, pi, featured], i) => {
@@ -109,6 +122,7 @@ export function buildSeed() {
       views: Math.round(120 + rnd() * 900), createdAt: now - (45 - i) * day,
       pricing: demoPricing(DESTS[dest].cat, price, id),
       ...(DEMO_UMRAH[id] ? { umrah: DEMO_UMRAH[id] } : {}),
+      ...(DEMO_FLASH[id] ? { flashEndsAt: new Date(now + DEMO_FLASH[id] * 36e5).toISOString() } : {}),
     };
   });
 
@@ -129,6 +143,8 @@ export function buildSeed() {
   const accounts = [{ id: 'admin', role: 'admin', email: 'mahmoudhussien200111@gmail.com', pass: 'Admin@2026' }]
     .concat(agencies.map((a) => ({ id: a.id, role: 'agency', agencyId: a.id, email: `${a.login}@demo.com`, pass: 'Demo@123' })));
   agencies.forEach((a) => delete a.login);
+
+  inquiries.forEach((q) => { if (q.status !== 'new') q.contactedAt = Math.min(now, q.createdAt + demoReplyHours(q.id, q.agencyId) * 36e5); });
 
   // Demo waiting-list entries (fictional): some still waiting, one already triggered by a price drop.
   const byId = Object.fromEntries(offers.map((o) => [o.id, o]));

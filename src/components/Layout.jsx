@@ -103,6 +103,7 @@ export function Footer() {
           <div>
             <h4>{T('للشركات', 'For agencies')}</h4>
             <Link to="login">{T('دخول الشركات', 'Agency login')}</Link>
+            <Link to="pricing">{T('باقات الشركات', 'Plans & pricing')}</Link>
             <a href="#/" onClick={(e) => { e.preventDefault(); open(() => <JoinModal />, { size: 'sm' }); }}>{T('سجّل شركتك', 'List your agency')}</a>
             <span className="ltr small faded">hello@rahhala.demo</span>
           </div>

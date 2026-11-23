@@ -7,6 +7,8 @@ import { BookingForm, InstallmentNote, waLink } from '../components/Booking';
 import { ShareButton } from '../components/Share';
 import { AlertBox, FavButton } from '../components/Alerts';
 import { UmrahDetails } from '../components/Umrah';
+import { FlashCountdown } from '../components/Countdown';
+import { responseBadge, responseStats } from '../lib/offers';
 import { useLang } from '../lib/i18n';
 import { useStore } from '../store/store';
 import { Link, navigate } from '../lib/router';
@@ -157,6 +159,7 @@ export function OfferPage({ params }) {
           <aside className="op-side">
             <div className="box op-pricebox">
               <div className="price"><small>{T('السعر للفرد (غرفة مزدوجة)', 'Price per person (double room)')}</small><div><b className="xl">{fmt(o.price)}</b> <small>{T('ج.م', 'EGP')}</small>{o.oldPrice ? <s>{fmt(o.oldPrice)}</s> : null}</div></div>
+              <FlashCountdown offer={o} variant="box" />
               <InstallmentNote total={o.price} />
               <div className="mt12"><CompareButton id={o.id} variant="button" /></div>
             </div>
@@ -243,6 +246,7 @@ export function AgencyPage({ params }) {
   usePageMeta(a ? L(a.name) : null, a ? `${L(a.name)} — ${L(a.tagline)}. ${L(a.desc)}` : '');
   if (!a || (!live && !canPreview)) return <NotFound what={T('الشركة دي مش متاحة', 'This agency is not available')} />;
   const cover = list[0]?.img || 'px:22643850';
+  const reply = responseBadge(responseStats(store.list('inquiries'), id));
   const cats = [...new Set(list.map((o) => o.category))];
 
   return (
@@ -251,6 +255,7 @@ export function AgencyPage({ params }) {
         <div className="ph-actions">
           <span className="ph-stat"><span className="stars">{stars(a.rating)}</span> <b>{a.rating}</b> ({fmt(a.reviews)})</span>
           {a.verified && <span className="ph-stat"><Verified /> {T('موثّقة', 'Verified')}</span>}
+          {reply && <span className="ph-stat"><Icon name="clock" size={14} />{reply === 1 ? T('بيرد خلال ساعة', 'Replies within an hour') : T(`بيرد خلال ${reply} ساعات`, `Replies within ${reply} hours`)}</span>}
           <ShareButton to={`agency/${id}`} title={L(a.name)} line={`${list.length} ${T('عرض', 'offers')} · ${L(a.tagline)}`} variant="glass" />
         </div>
       </PageHeader>

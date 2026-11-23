@@ -9,6 +9,8 @@ import { OfferModal, AgencyModal, DestModal } from './Modals';
 import { fromMonthly } from '../data/pricing';
 import { FavButton } from './Alerts';
 import { UmrahLine } from './Umrah';
+import { FlashCountdown } from './Countdown';
+import { responseBadge, responseStats } from '../lib/offers';
 
 export const stars = (n) => '★'.repeat(Math.round(n || 0)) + '☆'.repeat(5 - Math.round(n || 0));
 
@@ -61,6 +63,7 @@ export function OfferCard({ offer: o, i = 0, list = false }) {
           <span><Icon name="cal" size={15} />{fdate(o.date, lang)}</span>
         </div>
         <UmrahLine offer={o} />
+        <FlashCountdown offer={o} />
         {o.seats <= 6 ? (
           <div className="urgent">
             <span><Icon name="fire" size={15} />{T(`باقي ${o.seats} أماكن بس`, `Only ${o.seats} spots left`)}</span>
@@ -87,6 +90,7 @@ export function AgencyCard({ agency: a, i = 0 }) {
   const store = useStore();
   const { open } = useUI();
   const n = store.liveOffers().filter((o) => o.agencyId === a.id).length;
+  const reply = responseBadge(responseStats(store.list('inquiries'), a.id));
   return (
     <Reveal className="agcard" delay={(i % 4) * 70} style={{ '--c': a.color }} onClick={() => open(() => <AgencyModal id={a.id} />, { size: 'lg' })}>
       <div className="top">
@@ -98,6 +102,7 @@ export function AgencyCard({ agency: a, i = 0 }) {
         <span><Icon name="pin" size={15} />{L(CITIES[a.city])}</span>
         <span><Icon name="tag" size={15} />{n} {T('عرض', 'offers')}</span>
       </div>
+      {reply && <span className="reply-badge"><Icon name="clock" size={13} />{reply === 1 ? T('بيرد خلال ساعة', 'Replies within an hour') : T(`بيرد خلال ${reply} ساعات`, `Replies within ${reply} hours`)}</span>}
     </Reveal>
   );
 }

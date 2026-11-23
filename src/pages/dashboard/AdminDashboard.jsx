@@ -11,6 +11,7 @@ import { fmt } from '../../lib/format';
 import { InquiriesTable, Kpi, OffersTable, SideNav, StatusTabs, Toggle, countStatus, last30 } from './parts';
 import { AgencyForm, OfferForm, PasswordForm } from './forms';
 import { AlertsPanel } from '../../components/Alerts';
+import { PLANS, PLAN_ORDER, planKey } from '../../data/plans';
 
 export default function AdminDashboard() {
   const { T, L, lang } = useLang();
@@ -95,13 +96,14 @@ export default function AdminDashboard() {
           {list.length ? (
             <div className="tbl-wrap">
               <table className="tbl">
-                <thead><tr><th>{T('الشركة', 'Agency')}</th><th>{T('إيميل الدخول', 'Login email')}</th><th>{T('المدينة', 'City')}</th><th>{T('عروض', 'Offers')}</th><th>{T('طلبات', 'Leads')}</th><th>{T('التقييم', 'Rating')}</th><th>{T('موثّقة', 'Verified')}</th><th>{T('شغالة', 'Active')}</th><th /></tr></thead>
+                <thead><tr><th>{T('الشركة', 'Agency')}</th><th>{T('إيميل الدخول', 'Login email')}</th><th>{T('المدينة', 'City')}</th><th>{T('الباقة', 'Plan')}</th><th>{T('عروض', 'Offers')}</th><th>{T('طلبات', 'Leads')}</th><th>{T('التقييم', 'Rating')}</th><th>{T('موثّقة', 'Verified')}</th><th>{T('شغالة', 'Active')}</th><th /></tr></thead>
                 <tbody>
                   {list.map((a) => (
                     <tr key={a.id}>
                       <td><div className="cell"><Avatar agency={a} /><div><b className="fw5">{L(a.name)}</b><div className="dim xs">{T('ترخيص', 'License')} {a.license || '-'}</div></div></div></td>
                       <td className="ltr start xs">{store.get('accounts', a.id)?.email || '—'}</td>
                       <td>{L(CITIES[a.city])}</td>
+                      <td><select className={`sel plan-sel p-${planKey(a)}`} value={planKey(a)} onChange={(e) => { store.update('agencies', a.id, { plan: e.target.value }); toast(T('الباقة اتغيّرت', 'Plan updated')); }}>{PLAN_ORDER.map((k) => <option key={k} value={k}>{L(PLANS[k].name)}</option>)}</select></td>
                       <td>{O.filter((o) => o.agencyId === a.id).length}</td>
                       <td>{Q.filter((x) => x.agencyId === a.id).length}</td>
                       <td>★ {a.rating}</td>
