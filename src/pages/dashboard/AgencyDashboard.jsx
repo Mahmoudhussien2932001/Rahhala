@@ -12,6 +12,7 @@ import { OfferForm, PasswordForm } from './forms';
 import { AlertsPanel } from '../../components/Alerts';
 import { AgencyAnalytics, PlanCard } from './Analytics';
 import { CsvImport } from './CsvImport';
+import { VerificationCard } from './Review';
 
 export default function AgencyDashboard() {
   const { T, L, lang } = useLang();
@@ -156,7 +157,7 @@ function Profile({ agency, onSaved }) {
           <div className="dim xs">{T('الترخيص والتوثيق والتقييم بيتعدّلوا من الإدارة بس.', 'License, verification and rating are managed by the admin.')}</div>
           <button className="btn btn-primary">{T('احفظ التعديلات', 'Save changes')}</button>
         </form>
-        <div><PasswordForm accountId={agency.id} /></div>
+        <div className="stack"><VerificationCard agency={agency} /><PasswordForm accountId={agency.id} /></div>
       </div>
     </>
   );

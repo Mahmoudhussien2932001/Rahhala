@@ -12,7 +12,7 @@ import { FLIGHT_TYPES } from '../../data/umrah';
 import { isExpired } from '../../lib/offers';
 import { liveCountOf, planOf } from '../../data/plans';
 
-function compressImage(file) {
+export function compressImage(file) {
   return new Promise((resolve, reject) => {
     const img = new Image(), u = URL.createObjectURL(file);
     img.onload = () => {

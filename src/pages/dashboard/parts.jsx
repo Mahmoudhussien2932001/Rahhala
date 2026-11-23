@@ -116,7 +116,9 @@ export function OffersTable({ list, admin }) {
             const a = store.agency(o.agencyId) || {};
             return (
               <tr key={o.id}>
-                <td><div className="cell"><div className="thumb"><Photo src={o.img} w={200} /></div><div><b className="fw5">{L(o.title)}</b>{isExpired(o) && <span className="exp-pill">{T('انتهى ميعاده', 'Expired')}</span>}<div className="dim xs">{L(CATS[o.category])} · {L(DESTS[o.dest])} · {o.nights} {T('ليالي', 'n')}</div></div></div></td>
+                <td><div className="cell"><div className="thumb"><Photo src={o.img} w={200} /></div><div><b className="fw5">{L(o.title)}</b>{isExpired(o) && <span className="exp-pill">{T('انتهى ميعاده', 'Expired')}</span>}
+                  {o.review === 'pending' && <span className="exp-pill rv-p">{T('مستني موافقة الإدارة', 'Pending review')}</span>}
+                  {o.review === 'rejected' && <span className="exp-pill rv-r" title={o.reviewReason}>{T('اترفض', 'Rejected')}: {o.reviewReason}</span>}<div className="dim xs">{L(CATS[o.category])} · {L(DESTS[o.dest])} · {o.nights} {T('ليالي', 'n')}</div></div></div></td>
                 {admin && <td><span className="chip-ag"><Avatar agency={a} /><span className="nm">{L(a.name) || '—'}</span></span></td>}
                 <td><b className="accent">{fmt(o.price)}</b>{o.oldPrice ? <div className="dim xs strike">{fmt(o.oldPrice)}</div> : null}</td>
                 <td className={o.seats <= 5 ? 'warm fw6' : ''}>{o.seats}</td>

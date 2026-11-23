@@ -62,6 +62,14 @@ const OFFERS = [
 
 const NAMES = ['أحمد سمير', 'منى عادل', 'كريم فتحي', 'سارة محمود', 'محمد طارق', 'نهى إبراهيم', 'يوسف علي', 'هبة سامي', 'عمر خالد', 'رنا مصطفى', 'مصطفى حسن', 'ياسمين أشرف', 'Omar Nabil', 'Laila Hany', 'خالد عبدالله', 'إيمان سعيد', 'شريف رأفت', 'دينا وليد', 'Ahmed Fawzy', 'نورهان جمال'];
 
+/* Demo pending verification requests (fictional license images drawn as SVG). */
+const licenseSvg = (name, no) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420"><rect width="640" height="420" rx="18" fill="#FBF5E6" stroke="#C9922E" stroke-width="6"/><text x="320" y="80" font-family="Arial" font-size="30" font-weight="700" fill="#0E3B5A" text-anchor="middle">TOURISM COMPANY LICENSE</text><text x="320" y="118" font-family="Arial" font-size="18" fill="#7D909D" text-anchor="middle">DEMO DOCUMENT — NOT REAL</text><text x="60" y="200" font-family="Arial" font-size="22" fill="#0F2A3D">Company: ${name}</text><text x="60" y="250" font-family="Arial" font-size="22" fill="#0F2A3D">License No: ${no}</text><text x="60" y="300" font-family="Arial" font-size="22" fill="#0F2A3D">Category: A</text><circle cx="520" cy="320" r="56" fill="none" stroke="#C9922E" stroke-width="5"/><text x="520" y="328" font-family="Arial" font-size="18" fill="#C9922E" text-anchor="middle">STAMP</text></svg>`);
+export const DEMO_VERIFICATIONS = {
+  a10: () => ({ status: 'pending', licenseNo: 'C-5210', licenseImg: licenseSvg('Mawj Holidays', 'C-5210'), submittedAt: Date.now() - 2 * 864e5 }),
+  a8: () => ({ status: 'pending', licenseNo: 'B-4471', licenseImg: licenseSvg('Marsa Trips', 'B-4471'), submittedAt: Date.now() - 5 * 36e5 }),
+};
+
 /* Demo plans per agency (others are on Free). */
 export const DEMO_PLANS = { a1: 'premium', a2: 'pro', a4: 'pro', a5: 'pro', a9: 'pro' };
 
@@ -110,7 +118,7 @@ export function buildSeed() {
 
   const agencies = AGENCIES.map(([id, name, tagline, color, city, rating, reviews, verified, since, license, desc, login]) => {
     const n = String(10000000 + Number(id.slice(1)) * 1234567).slice(0, 8);
-    return { id, name, tagline, color, city, rating, reviews, verified, since, license, desc, active: true, plan: DEMO_PLANS[id] || 'free', phone: '010' + n, whatsapp: '2010' + n, email: `info@${login}-demo.com`, createdAt: now - (2026 - since) * 9 * day, login };
+    return { id, name, tagline, color, city, rating, reviews, verified, since, license, desc, active: true, plan: DEMO_PLANS[id] || 'free', ...(!verified && DEMO_VERIFICATIONS[id] ? { verification: DEMO_VERIFICATIONS[id]() } : {}), phone: '010' + n, whatsapp: '2010' + n, email: `info@${login}-demo.com`, createdAt: now - (2026 - since) * 9 * day, login };
   });
 
   const offers = OFFERS.map(([id, agencyId, dest, from, ar, en, price, oldPrice, nights, d, seats, features, pi, featured], i) => {

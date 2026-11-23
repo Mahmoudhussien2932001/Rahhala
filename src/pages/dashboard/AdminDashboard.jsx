@@ -12,6 +12,9 @@ import { InquiriesTable, Kpi, OffersTable, SideNav, StatusTabs, Toggle, countSta
 import { AgencyForm, OfferForm, PasswordForm } from './forms';
 import { AlertsPanel } from '../../components/Alerts';
 import { PLANS, PLAN_ORDER, planKey } from '../../data/plans';
+import { ReviewQueue } from './Review';
+import { ActivityLog } from './Activity';
+import { exportAgencies, exportOffers, exportRequests } from '../../lib/csv';
 
 export default function AdminDashboard() {
   const { T, L, lang } = useLang();
@@ -30,12 +33,15 @@ export default function AdminDashboard() {
   const st = countStatus(Q);
   const AL = store.list('alerts');
   const readyAlerts = AL.filter((x) => x.status === 'ready').length;
+  const toReview = A.filter((a) => a.verification?.status === 'pending').length + O.filter((o) => o.review === 'pending').length;
   const tabs = [
     ['overview', T('نظرة عامة', 'Overview'), 'chart'],
     ['agencies', T('الشركات', 'Agencies'), 'bld'],
     ['offers', T('كل العروض', 'All offers'), 'tag'],
     ['inquiries', T('كل الطلبات', 'All requests'), 'inbox', st.new],
     ['alerts', T('قوائم الانتظار', 'Waiting lists'), 'bell', readyAlerts],
+    ['review', T('المراجعة', 'Review'), 'shield', toReview],
+    ['activity', T('سجل النشاط', 'Activity log'), 'clock'],
     ['settings', T('الإعدادات', 'Settings'), 'gear'],
   ];
   const who = <><span className="av lg plain"><Logo size={42} /></span><div><b>{T('لوحة الأدمن', 'Admin')}</b><span className="ltr xs">{store.get('accounts', 'admin')?.email}</span></div></>;
@@ -145,6 +151,20 @@ export default function AdminDashboard() {
         <div className="panel"><InquiriesTable list={l} admin /></div>
       </>
     );
+  } else if (tab === 'review') {
+    body = (
+      <>
+        <div className="dhead"><div><div className="eyebrow">{toReview} {T('مستني مراجعة', 'waiting for review')}</div><h2>{T('المراجعة', 'Review')}</h2></div></div>
+        <ReviewQueue />
+      </>
+    );
+  } else if (tab === 'activity') {
+    body = (
+      <>
+        <div className="dhead"><div><div className="eyebrow">{T('مين عمل إيه وإمتى', 'Who did what, and when')}</div><h2>{T('سجل النشاط', 'Activity log')}</h2></div></div>
+        <ActivityLog />
+      </>
+    );
   } else if (tab === 'alerts') {
     body = (
       <>
@@ -157,6 +177,22 @@ export default function AdminDashboard() {
       <>
         <div className="dhead"><div><div className="eyebrow">{T('حساب الأدمن', 'Admin account')}</div><h2>{T('الإعدادات', 'Settings')}</h2></div></div>
         <div className="two eq">
+          <div className="panel">
+            <h3>{T('مراجعة العروض الجديدة', 'New-offer moderation')}</h3>
+            <p className="muted small">{T('لما تكون شغّالة، أي عرض جديد من شركة (أو منسوخ أو مستورد) مش هيظهر للزوار غير بعد موافقتك من تبويب "المراجعة".', 'When on, every new offer from an agency (including copies and CSV imports) stays hidden from visitors until you approve it in the Review tab.')}</p>
+            <div className="mt12"><Toggle checked={!!store.settings.moderation} onChange={(v) => { store.setSetting('moderation', v); toast(v ? T('مراجعة العروض اشتغلت', 'Moderation is on') : T('مراجعة العروض اتقفلت', 'Moderation is off')); }} /> <span className="small">{store.settings.moderation ? T('شغّالة', 'On') : T('مقفولة', 'Off')}</span></div>
+          </div>
+          <div className="panel">
+            <h3>{T('تصدير البيانات', 'Export data')}</h3>
+            <p className="muted small">{T('نزّل ملفات CSV بتفتح في Excel وGoogle Sheets.', 'Download CSV files that open in Excel and Google Sheets.')}</p>
+            <div className="export-btns">
+              <button className="btn btn-ghost btn-sm" onClick={() => exportAgencies(store)}><Icon name="bld" size={15} />{T('الشركات', 'Agencies')} ({A.length})</button>
+              <button className="btn btn-ghost btn-sm" onClick={() => exportOffers(store)}><Icon name="tag" size={15} />{T('العروض', 'Offers')} ({O.length})</button>
+              <button className="btn btn-ghost btn-sm" onClick={() => exportRequests(store)}><Icon name="inbox" size={15} />{T('الطلبات', 'Requests')} ({Q.length})</button>
+            </div>
+          </div>
+        </div>
+        <div className="two eq mt18">
           <PasswordForm accountId="admin" />
           <div className="panel">
             <h3>{T('البيانات', 'Data')}</h3>
