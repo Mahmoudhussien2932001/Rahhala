@@ -145,6 +145,8 @@ img { max-width: 100%; display: block }
 .hero h1 .ln { display: block; padding-bottom: .05em }
 .hero h1 .ln:nth-child(2) { font-size: .55em; font-weight: 600; opacity: .95 }
 .hero h1 .word { font-style: normal; display: inline-block; background: linear-gradient(100deg, #FFD58A, #FF9C5B 50%, #FFE7C2); -webkit-background-clip: text; background-clip: text; color: transparent; animation: wordIn .9s var(--ease) both;
+  /* background-clip:text only paints inside the box — pad it so Arabic dots/descenders (ب ي ج) aren't cut, and cancel the extra space with negative margins */
+  padding: .12em .06em .28em; margin: -.12em -.06em -.28em;
   /* text-shadow can't sit behind clipped gradient text, so use drop-shadow filters for contrast on bright photos */
   filter: blur(0) drop-shadow(0 2px 2px rgba(4, 20, 32, .55)) drop-shadow(0 6px 22px rgba(4, 20, 32, .55)) }
 @keyframes wordIn { from { opacity: 0; transform: translateY(40%); filter: blur(8px) drop-shadow(0 2px 2px rgba(4, 20, 32, 0)) drop-shadow(0 6px 22px rgba(4, 20, 32, 0)) } }

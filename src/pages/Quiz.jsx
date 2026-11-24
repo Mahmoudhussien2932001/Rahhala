@@ -6,7 +6,7 @@ import { useLang } from '../lib/i18n';
 import { useStore } from '../store/store';
 import { navigate } from '../lib/router';
 import { usePageMeta } from '../lib/seo';
-import { MONTHS } from '../lib/format';
+import { MONTHS, MONTHS_FULL } from '../lib/format';
 import { DESTS } from '../data/catalog';
 import { BUDGETS, VIBES, WHO, matchOffers } from '../data/quiz';
 
@@ -69,7 +69,7 @@ export default function Quiz() {
 
             {step === 1 && (
               <div className="qz-opts months">
-                {MONTHS[lang].map((m, i) => (
+                {MONTHS_FULL[lang].map((m, i) => (
                   <button key={m} className={a.month === i + 1 ? 'on' : ''} onClick={() => pick('month', i + 1)}><b>{m}</b></button>
                 ))}
                 <button className={`wide ${a.month === 'any' ? 'on' : ''}`} onClick={() => pick('month', 'any')}><Icon name="cal" size={18} /><b>{T('أي وقت — أنا مرن', "Any time — I'm flexible")}</b></button>
